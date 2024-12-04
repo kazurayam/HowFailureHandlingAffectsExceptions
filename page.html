@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Title</title>
+  <style></style>
+</head>
+
+<body>
+  <div id="main">
+    <p>Reproducing Selenium StaleElementReferenceException</p>
+    <button id="btn">This button will disappear in 3 seconds</button>
+  </div>
+  <script type="text/javascript">
+    function removeButton() {
+      const btn = document.getElementById("btn");
+      btn.remove();
+      console.log("removed the button")
+    }
+    window.addEventListener("load", (event) => {
+      console.log("Hello, world!");
+      const timeout = setTimeout(removeButton, 3000);
+    });
+  </script>
+</body>
+
+</html>

@@ -10,7 +10,8 @@ public class ThrowableUtils {
 
 	private static Throwable getCauseExcept(Throwable t, Class<Throwable> except) {
 		assert t != null
-		if (t.getCause() != null) { 
+		assert except != null
+		if (t.getCause() != null) {
 			Throwable cause = t.getCause()
 			println "*** " + cause.getClass().getName()
 			if (cause.getClass() != except) {
