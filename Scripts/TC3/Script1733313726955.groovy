@@ -6,10 +6,17 @@ import org.openqa.selenium.WebElement
 
 import com.kms.katalon.core.configuration.RunConfiguration
 import com.kms.katalon.core.model.FailureHandling
+import com.kms.katalon.core.testobject.ConditionType
 import com.kms.katalon.core.testobject.TestObject
 import com.kms.katalon.core.webui.driver.DriverFactory
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
-import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+
+TestObject makeTestObject(String id, String xpathExpression) {
+	TestObject tObj = new TestObject(id)
+	tObj.addProperty("xpath", ConditionType.EQUALS, xpathExpression)
+	return tObj
+}
 
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
 Path html = projectDir.resolve("page.html")
@@ -21,17 +28,12 @@ WebUI.navigateToUrl(urlString)
 WebUI.setViewPortSize(800, 600)
 WebDriver driver = DriverFactory.getWebDriver()
 
-TestObject btnTO = findTestObject("very_shy_button")
+TestObject btnTO = makeTestObject("btn", "//button[@id='btn']")
 WebUI.verifyElementPresent(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
 
 WebElement btnELM = WebUI.findWebElement(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
-TestObject btnTO2 = WebUI.convertWebElementToTestObject(btnELM)
-
-println WebUI.getText(btnTO)
 
 WebUI.delay(5)
-
-println WebUI.getText(btnTO)
 
 try {
 	//btnELM.click()

@@ -11,7 +11,7 @@
 <body>
   <div id="main">
     <p>Reproducing Selenium StaleElementReferenceException</p>
-    <button id="btn">This button will disappear in 3 seconds</button>
+    <button id="btn">This page will reload in 3 seconds after initial page load</button>
   </div>
   <script type="text/javascript">
     function removeButton() {
@@ -19,9 +19,12 @@
       btn.remove();
       console.log("removed the button")
     }
+    function pageReload() {
+      window.location.reload()
+    }
     window.addEventListener("load", (event) => {
       console.log("Hello, world!");
-      const timeout = setTimeout(removeButton, 3000);
+      const timeout = setTimeout(pageReload, 3000);
     });
   </script>
 </body>

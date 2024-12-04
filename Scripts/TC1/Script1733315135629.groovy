@@ -27,15 +27,11 @@ WebUI.verifyElementPresent(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
 WebElement btnELM = WebUI.findWebElement(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
 TestObject btnTO2 = WebUI.convertWebElementToTestObject(btnELM)
 
-println WebUI.getText(btnTO)
-
 WebUI.delay(5)
 
-println WebUI.getText(btnTO)
-
 try {
-	//btnELM.click()
-	WebUI.findWebElement(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
+	btnELM.click()
+	//WebUI.findWebElement(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
 } catch (Exception e) {
 	println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
 }
