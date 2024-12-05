@@ -54,19 +54,19 @@ You can see the source at GitHub
 
 -   <https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/targetPage.html>
 
-The page will like this soon after the page is loaded:
+When the page opens, it will look like this:
 
 <figure>
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/page_just_loaded.png" alt="page just loaded" />
 </figure>
 
-But after 3 seconds, the `` <button id='myButton>' element is silently removed. And the button is recreated soon. The content text and the style is slightly changed, but the `id `` value remains the same.
+But after 3 seconds, the `<button id='myButton'>` element is silently removed. And the button is recreated soon. The content text and the style is slightly changed, but the `id` value remains to be `myButton`.
 
 <figure>
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/recreated_button.png" alt="recreated button" />
 </figure>
 
-The JavaScript in the target HTML changes the DOM dynamically.
+The HTML contains the following JavaScript. This changes the DOM dynamically.
 
       <script type="text/javascript">
         function modifyPage() {
@@ -88,7 +88,7 @@ The JavaScript in the target HTML changes the DOM dynamically.
         });
       </script>
 
-### Object Repository/myButton.rs
+### Object Repository/myButton
 
 I created a Test Object named `myButton`, which contains a simple XPath expression:
 
@@ -164,13 +164,13 @@ See the source of
 
 The TC1 does the following steps:
 
-1.  open browser, navigate to the targetPage.html, make sure the page is opened. Prepare a Test Object that selects the `<button id='myButton'>` element.
+1.  open browser, navigate to the targetPage.html, prepare a Test Object that selects the `<button id='myButton'>` element, make sure the page is opened.
 
 2.  TC1 creates a variable named `myButtonWebElement` to which assigned an `org.openqa.selenium.WebElement` object that refers to the `<button id='myButton'>` element in the page.
 
 3.  TC1 intentionally waits for 5 seconds.
 
-4.  On the other hand, in the opened browser, 3 seconds after the page load, the `` <button id='myButton'> in blue color is removed. And a new `<button id='myButton'> `` is created and inserted into the page.
+4.  On the other hand, in the opened browser, at 3 seconds after the page load, the `<button id='myButton'>` in blue color is removed. And a new `<button id='myButton'>` in grey color is created and inserted into the page.
 
 5.  After 5 seconds of wait, TC1 calls `myButtonWebElement.click()`. At this call, a `StaleElementReferenceException` will be thrown.
 
@@ -193,11 +193,11 @@ See the console log emited by TC1:
     12月 05, 2024 9:52:59 午後 com.kms.katalon.core.logging.KeywordLogger endTest
     情報: END Test Cases/TC1
 
-The variable `myButtonWebElement` is an instance of `org.openqa.selenium.WebElement` class. The variable got the valid reference initially. But after 5 seconds of wait, **the reference to the `<button id='myButton'>` element became stale because the target Web page dynamically changed its internal state**. This is the core reason why a `StaleElementReferenceException` is thrown.
+The variable `myButtonWebElement` is an instance of `org.openqa.selenium.WebElement` class. The variable got a valid reference to the `<button id='myButton'>` element in the target page initially. But after 5 seconds of wait, **the reference to the `<button id='myButton'>` element has become stale because the JavaScript in the target Web page dynamically changed the page’s DOM**. This is the core reason why a `StaleElementReferenceException` is thrown.
 
 ### Test Cases/TC2
 
-Let me show you another sample code. The TC1 refered to a variable declared as an instance of `org.openqa.selenium.WebElement` class. But an usual Katalon Studio user does not write a Test Case in this way. They will primarily use `WebUI.*` keywords. The next TC2 calls `WebUI` keywords (no call to the Selenium API), and it can reproduce StaleElementReferenceException.
+Let me show you another sample code. The TC1 referred to a variable declared as an instance of `org.openqa.selenium.WebElement` class. But usual Katalon Studio users won’t write their Test Cases using the Selenium API. They will primarily use `WebUI.*` keywords. The next TC2 calls only `WebUI` keywords (no call to the Selenium API), and it can still reproduce StaleElementReferenceException.
 
 See the source of [Test Cases/TC2](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC2/Script1733285851173.groovy).
 
@@ -333,18 +333,133 @@ At the Line#103, a variable named `foundElement` is declared to have a reference
 
 At the Line#108, the `WebUI.waitForElementNotClickable` keyword repeats referring to the `foundElement` until it finds "web element is not clickable any more". In fact, the TC2 instructs the keyword is told to wait with 10 seconds timeout.
 
-While the keyword is in the loop, in the target web page, the intial `<button id='myButton'>` element is once removed; and a new `<button id='myButton'>` element is inserted. Therefore the `WebUI.waitForElementNotClickable` keyword threw a StaleElementReferenceException.
+While the keyword is in the loop, in the target web page, the initial `<button id='myButton'>` element will be once removed; and a new `<button id='myButton'>` element will be inserted. Therefore the `WebUI.waitForElementNotClickable` keyword threw a StaleElementReferenceException. A SERA was thrown by TC2 by just the same reason as the TC1.
 
-The same senario as TC1 applies to the TC2 as well.
+### Which WebUI keywords are like to throw SERE?
 
-### Which WebUI keywords are like to throw SERE
-
-In the TC2, I pointed out that `WebUI.waitForElementNotPresent` keyword may throw a StaleElementReferenceException in a condition where the target web page dynamically changes its DOM, and the change accidentally affects to the keyword. Any other keywords behave the same? Possibly there could be many, but I haven’t checked it. I just happened to find the `waitForElementNotPreset` keyword is implemented to be SERE-prone. I haven’t checked the source of other keywords. I’m not going to do it.
+In the TC2, I pointed out that `WebUI.waitForElementNotPresent` keyword may throw a StaleElementReferenceException in a condition where the target web page dynamically changes its DOM, and the change accidentally affects to the keyword. Any other keywords behave the same? Possibly there could be many other keywords. I just happened to find the `waitForElementNotPreset` keyword is implemented to be SERE-prone. I haven’t checked the source of other keywords; and I’m not going to do it.
 
 ### Test Cases/TC3
 
-### Test Cases/TC4
+Lastly I would show one more script. The TC3 is almost the same as TC2 except one line different. See the source of [Test Cases/TC3](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC3/Script1733313726955.groovy).
+
+    import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+    import java.nio.file.Path
+    import java.nio.file.Paths
+
+    import org.openqa.selenium.WebElement
+
+    import com.kms.katalon.core.configuration.RunConfiguration
+    import com.kms.katalon.core.model.FailureHandling
+    import com.kms.katalon.core.testobject.TestObject
+    import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+
+    /**
+     * TC3
+     *
+     * A variation derived from the TC2.
+     * 
+     * This script demonstrates that FailureHandling.CONTINUE_ON_FAILURE makes 
+     * all keywords silent.
+     * No exception will be raised by a keyword invokation.
+     * Your Test Case script can not catch any Exception.
+     * 
+     * @author kazurayam
+     */
+    Path projectDir = Paths.get(RunConfiguration.getProjectDir())
+    Path html = projectDir.resolve("targetPage.html")
+    URL htmlURL = html.toFile().toURI().toURL()
+    String urlString = htmlURL.toExternalForm()
+    WebUI.comment("navigating to " + urlString)
+
+    WebUI.openBrowser('')
+    WebUI.navigateToUrl(urlString)
+    WebUI.setViewPortSize(800, 600)
+
+    TestObject myButtonTestObject = findTestObject("Object Repository/myButton")
+
+    WebUI.verifyElementPresent(myButtonTestObject, 10, FailureHandling.STOP_ON_FAILURE)
+
+    try {
+        WebUI.verifyElementNotPresent(myButtonTestObject,
+                                    10,
+                                    FailureHandling.CONTINUE_ON_FAILURE)
+        // The keyword will throw no Exception
+    } catch (Exception e) {
+        // You can not catch SERE here
+        println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
+        println "==========================================================================="
+        e.printStackTrace()
+        println "==========================================================================="
+    }
+
+    WebUI.closeBrowser()
+
+    // In the end, in the Console, you will find a long Stack trace of StepFailedException is printed.
+
+The TC2 has a code fragmen like this:
+
+    try {
+        WebUI.waitForElementNotClickable(myButtonTestObject,
+                                    10,
+                                    FailureHandling.STOP_ON_FAILURE)
+        // so the keyword will throw a SERE
+
+The TC3 has a code like this:
+
+    try {
+        WebUI.waitForElementNotClickable(myButtonTestObject,
+                                    10,
+                                    FailureHandling.CONTINUE_ON_FAILURE)
+    } catch (Exception e) {
+        // You can not catch SERE here
+        println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
+        println "==========================================================================="
+        e.printStackTrace()
+        println "==========================================================================="
+    }
+
+When I ran the TC3, I got the following output in the console:
+
+    12月 05, 2024 11:29:53 午後 com.kms.katalon.core.logging.KeywordLogger startTest
+    情報: START Test Cases/TC3
+    ...
+    12月 05, 2024 11:30:24 午後 com.kms.katalon.core.logging.KeywordLogger logFailed
+    重大: ❌ Web element with id: 'Object Repository/myButton' located by 'By.xpath: //button[@id='myButton']' is present after '10' second(s) (Root cause: com.kms.katalon.core.exception.StepFailedException: Web element with id: 'Object Repository/myButton' located by 'By.xpath: //button[@id='myButton']' is present after '10' second(s)
+        at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain.stepFailed(WebUIKeywordMain.groovy:117)
+        at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain$stepFailed$0.call(Unknown Source)
+        at com.kms.katalon.core.webui.keyword.builtin.VerifyElementNotPresentKeyword$_verifyElementNotPresent_closure1.doCall(VerifyElementNotPresentKeyword.groovy:124)
+        at com.kms.katalon.core.webui.keyword.builtin.VerifyElementNotPresentKeyword$_verifyElementNotPresent_closure1.doCall(VerifyElementNotPresentKeyword.groovy)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain.runKeyword(WebUIKeywordMain.groovy:35)
+        at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain$runKeyword.call(Unknown Source)
+        at com.kms.katalon.core.webui.keyword.builtin.VerifyElementNotPresentKeyword.verifyElementNotPresent(VerifyElementNotPresentKeyword.groovy:133)
+        at com.kms.katalon.core.webui.keyword.builtin.VerifyElementNotPresentKeyword.execute(VerifyElementNotPresentKeyword.groovy:70)
+        at com.kms.katalon.core.keyword.internal.KeywordExecutor.executeKeywordForPlatform(KeywordExecutor.groovy:74)
+        at com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords.verifyElementNotPresent(WebUiBuiltInKeywords.groovy:1557)
+        at TC3.run(TC3:40)
+        ...
+      Caused by: com.kms.katalon.core.exception.StepFailedException: Web element with id: 'Object Repository/myButton' located by 'By.xpath: //button[@id='myButton']' is present after '10' second(s)
+        ... 27 more
+      ...
+    12月 05, 2024 11:30:25 午後 com.kms.katalon.core.logging.KeywordLogger endTest
+    情報: END Test Cases/TC3
+
+You can see there is no output from the statement `println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"`. This implies that no exception was thrown out of a keyword call with `FailureHandling.CONTINUE_ON_FAILURE` is specified.
 
 ## Conclusion
 
-If you encountered a StaleElementReferenceException, you need to study how your target web page is written, especially how JavaScript works inside the page. Unless you understand how your target web page is dynamically modifed by JavaScript, you would not be able to avoid StaleElementReferenceException to occure in your Katalon project. Without knowing the internal of your target web page, it is impossible fix that issue. You should not blame Katalon Studio that it does not help you much for resolving issues about SERE.
+I explained the core reason how a StaleElementReferenceException is raised by Katlaon WebUI keywords. The Exception could be thrown with the combination of 2 factors:
+
+1.  in the case that the target web page is driven by JavaScript, which changes the page’s DOM dynamically: remove an Element, recreate an Element.
+
+2.  in the case that the WebUI keyword is implemented like `WebUI.waitForElementNotClickable`: a variable of type `org.openqa.selenium.WebElement` is repeatedly referred to so that the `WebElement` turned by be stale due to the DOM change in the target web page.
+
+When you encountered a SERE, you need to study how your target web page is written. You need to know how JavaScript works inside the page.
+
+Provided that you studied and clarified the target page’s dynamic nature, you need to read the source of WebUI keywords that you want to use. You should check if the keyword is sensitive to the dynamic web page.
+
+Then, after all, how can you avoid SERE at all? --- Well I don’t know. There is no silver bullet. The cases vary. Please find your way for yourself.
