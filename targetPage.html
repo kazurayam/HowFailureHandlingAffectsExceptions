@@ -5,16 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Reproducing Selenium StaleElementReferenceException</title>
   <style>
-#myButton {
-  background-color: #008CBA;; /* Blue */
+body { background-color: cornsilk; }
+button {
+  background-color: #008CBA; /* Blue */
   border: none; color: white; padding: 15px 32px;
   text-align: center; text-decoration: none; display: inline-block;
   font-size: 16px; border-radius: 25px;
 }
+button.recreated {
+  background-color: #e7e7e7;
+  color: #555555;
+  border-style: solid;
+  border-color: #424242;
+}
   </style>
 </head>
 <body>
-  <h2>Reproducing Selenium StaleElementReferenceException</h2>
+  <h3>Reproducing Selenium StaleElementReferenceException</h3>
   <div id="main">
     <button id="myButton">This button will be removed in 3 seconds</button>
   </div>
@@ -22,12 +29,11 @@
     function modifyPage() {
       // remove the <button @id='myButton'>
       document.getElementById('myButton').remove();
-      // recreate the <button @id='byButton'> with slightly diffenrent text and style
+      // recreate the <button @id='byButton'>
       let btn = document.createElement('button');
       btn.id = 'myButton';
-      btn.textContent = 'This button was recreated'
-      btn.style.backgroundColor = '#e7e7e7';
-      btn.style.color = '#555555'
+      btn.textContent = 'This button once was removed and recreated'
+      btn.classList = ['recreated'];
       document.getElementById('main').append(btn);
       console.log('modified the page')
     }
