@@ -11,10 +11,15 @@ import com.kms.katalon.core.testobject.TestObject
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 /**
- * TC1 --- this script can reproduce a Selenium StaleElementReferenceException (SERE).
- *      
- * A reference to a WebElement will get stale if the target HTML node was once removed and recreated.
- * Referring to the stale WebElement object will cause an SERE.
+ * TC1
+ * 
+ * This script can reproduce a Selenium StaleElementReferenceException (SERE).   
+ * The target HTML is dynamically modifiedy by JavaScript inside it. 
+ * An HTML node will be removed and recreated at 3 seconds after the initial page load.
+ * A reference to the HTML node as org.openqa.selenium.WebElement object will
+ * get stale by the DOM modification by JavaScript.
+ * 
+ * Referring to the stale WebElement object will cause a SERE.
  *          
  * @author kazurayam
  */
@@ -44,8 +49,9 @@ WebUI.delay(5)
 // At 3 seconds after the page load, JavaScript wil remove and recreate the HTML element
 
 try {
+	// at 3 secs after the initial page loading,
 	// the old <button id='myButton'> was removed, 
-	// the new <button id='myButton'> was recreted.
+	// a new <button id='myButton'> was recreted.
 	myButtonWebElement.click()  // this statement will throw a StaleElementReferenceException
 } catch (Exception e) {
 	WebUI.comment(">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<")
