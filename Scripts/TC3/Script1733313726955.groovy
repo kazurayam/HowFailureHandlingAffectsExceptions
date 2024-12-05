@@ -11,24 +11,19 @@ import com.kms.katalon.core.testobject.TestObject
 import com.kms.katalon.core.webui.driver.DriverFactory
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
-
-TestObject makeTestObject(String id, String xpathExpression) {
-	TestObject tObj = new TestObject(id)
-	tObj.addProperty("xpath", ConditionType.EQUALS, xpathExpression)
-	return tObj
-}
-
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-Path html = projectDir.resolve("page.html")
+Path html = projectDir.resolve("targetPage.html")
 URL htmlURL = html.toFile().toURI().toURL()
 String urlString = htmlURL.toExternalForm()
 
+// open a browser, navigate to the target web page
 WebUI.openBrowser('')
 WebUI.navigateToUrl(urlString)
 WebUI.setViewPortSize(800, 600)
 WebDriver driver = DriverFactory.getWebDriver()
 
-TestObject btnTO = makeTestObject("btn", "//button[@id='btn']")
+TestObject btnTO = findTestObject("myButton")
+
 WebUI.verifyElementPresent(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
 
 WebElement btnELM = WebUI.findWebElement(btnTO, 10, FailureHandling.STOP_ON_FAILURE)

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project>
    <description></description>
-   <name>HowFailureHandlingAffectsExceptions</name>
+   <name>StaleElementReferenceReproduction</name>
    <tag></tag>
    <UUID>3372e0b0-cdc1-450b-902c-18f0e4ff6c58</UUID>
+   <freeLicense>true</freeLicense>
    <migratedVersion>5.9.0</migratedVersion>
+   <modifiedEdition>FREE</modifiedEdition>
+   <modifiedVersion>10.0.0</modifiedVersion>
    <pageLoadTimeout>0</pageLoadTimeout>
+   <projectFileLocation>/Users/kazuakiurayama/katalon-workspace/StaleElementReferenceExceptionReproduction/HowFailureHandlingAffectsExceptions.prj</projectFileLocation>
    <sourceContent>
       <sourceFolderList>
          <sourceFolderConfiguration>

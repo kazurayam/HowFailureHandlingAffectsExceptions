@@ -10,7 +10,7 @@ TestObject makeTestObject(String id, String xpath) {
 	return tObj
 }
 
-WebUI.openBrowser("http://demoaut-mimic.kazurayam.com/")
+WebUI.openBrowser("http://demoaut.katalon.com/")
 TestObject validButton = makeTestObject("Make Appointment button",
 	"//a[@id='btn-make-appointment']")
 

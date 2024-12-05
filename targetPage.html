@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reproducing Selenium StaleElementReferenceException</title>
+  <style>
+#myButton {
+  background-color: #008CBA;; /* Blue */
+  border: none; color: white; padding: 15px 32px;
+  text-align: center; text-decoration: none; display: inline-block;
+  font-size: 16px; border-radius: 25px;
+}
+  </style>
+</head>
+<body>
+  <h2>Reproducing Selenium StaleElementReferenceException</h2>
+  <div id="main">
+    <button id="myButton">This button will be removed in 3 seconds</button>
+  </div>
+  <script type="text/javascript">
+    function modifyPage() {
+      // remove the <button @id='myButton'>
+      document.getElementById('myButton').remove();
+      // recreate the <button @id='byButton'> with slightly diffenrent text and style
+      let btn = document.createElement('button');
+      btn.id = 'myButton';
+      btn.textContent = 'This button was recreated'
+      btn.style.backgroundColor = '#e7e7e7';
+      btn.style.color = '#555555'
+      document.getElementById('main').append(btn);
+      console.log('modified the page')
+    }
+    // will modify the page at 3 seconds after the initial loading
+    window.addEventListener("load", (event) => {
+      console.log('the page was loaded initially');
+      const timeout = window.setTimeout(modifyPage, 3000);
+      console.log('timeout was set');
+    });
+  </script>
+</body>
+</html>

@@ -12,16 +12,17 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
 
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-Path html = projectDir.resolve("page.html")
+Path html = projectDir.resolve("targetPage.html")
 URL htmlURL = html.toFile().toURI().toURL()
 String urlString = htmlURL.toExternalForm()
 
+// open a browser, navigate to the target web page
 WebUI.openBrowser('')
 WebUI.navigateToUrl(urlString)
 WebUI.setViewPortSize(800, 600)
 WebDriver driver = DriverFactory.getWebDriver()
 
-TestObject btnTO = findTestObject("very_shy_button")
+TestObject btnTO = findTestObject("myButton")
 WebUI.verifyElementPresent(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
 
 WebElement btnELM = WebUI.findWebElement(btnTO, 10, FailureHandling.STOP_ON_FAILURE)
