@@ -475,3 +475,5 @@ I found many people encountered SERE while they tried to automate the login proc
 I have ever tried to "fix SERE" at the MS Azure login page, but failed. See [my previous post](https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973/103).
 
 The log-in pages of Microsoft Azure have a rich set of JavaScript which dynamically modifies the DOM drastically. I would warn you, if you are going to try automating the MS Asure DevOps login, it’s terribly difficult. You would certainly see StaleElementReferenceExceptions, and (I think) you would not be able to get rid of the SERE. It is due to the way how the target page is coded. Don’t blame Katalon Studio for the difficulty.
+
+The StaleElementReferenceException keeps up with any Selenium WebDriver-based browser-automation tools including Katlaon Studio. On the other hand, there are new generations of browser-automation tool based on CDP/BiDi technologies. For example, [Playwright](https://playwright.dev/). I just guess that those new comers work better for the Azure DevOps log-in process. I hope someone to try it.
