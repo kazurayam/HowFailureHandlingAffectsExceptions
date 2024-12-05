@@ -464,7 +464,7 @@ Provided that you studied and clarified the target page’s dynamic nature, you 
 
 Then, after all, how can you avoid SERE at all? --- Well I don’t know. There is no silver bullet. The cases vary. Please find your way for yourself.
 
-## Microsoft Azure DevOps sign-in processes --- a death zone
+## Microsoft Azure DevOps log-in process --- a death zone
 
 I found many people encountered SERE while they tried to automate the login process into Microsoft Azure DevOps.
 
@@ -472,6 +472,6 @@ I found many people encountered SERE while they tried to automate the login proc
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MS_Azure_sign_in_page.png" alt="MS Azure sign in page" />
 </figure>
 
-I have ever tried to "fix SERE" at the MS Azure login page, but failed. See \[my previous post\](<https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973/103>).
+I have ever tried to "fix SERE" at the MS Azure login page, but failed. See [my previous post](https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973/103).
 
 The log-in pages of Microsoft Azure have a rich set of JavaScript which dynamically modifies the DOM drastically. I would warn you, if you are going to try automating the MS Asure DevOps login, it’s terribly difficult. You would certainly see StaleElementReferenceExceptions, and (I think) you would not be able to get rid of the SERE. It is due to the way how the target page is coded. Don’t blame Katalon Studio for the difficulty.
