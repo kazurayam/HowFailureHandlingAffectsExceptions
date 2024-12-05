@@ -16,7 +16,7 @@ I would use an achronym "SERE" (**S**tale **E**lement **R**eference **E**xceptio
 
 ## Problem to solve
 
-In the [Katalon Community](https://forum.katalon.com/), there a lot of topics about SERE:
+In the [Katalon Community](https://forum.katalon.com/), there are a lot of topics about SERE:
 
 -   [Unable to catch StaleElementReferenceException using try/catch mehcanism](https://forum.katalon.com/t/unable-to-catch-staleelementreferenceexception-using-try-catch-mehcanism/100180)
 
@@ -30,18 +30,19 @@ In the [Katalon Community](https://forum.katalon.com/), there a lot of topics ab
 
 Please make a search in the forum to look up more
 
-The posters were eager how to find out some way to fix/manage/avoid SERE, and in most cases they failed. The topics they posted are still open (unresolved) today.
+The posters were eager to know how to find out some way to fix/manage/avoid SERE, and in most cases they failed. Most of these topics are still open (unresolved) today.
 
-I found a common shortcoming in these posts about SERE. The original posters eagerly ask for help for fixing (avoiding) SERE in their own projects, but **they do not show any sample running code in Katalon Studio that enable you to reproduce the SERE.** Backed with no code examle, the discussions were ambiguous, resulting no concrete solutions what to do next.
+I found a common shortcoming in these posts about SERE. The original posters ask for help for fixing (avoiding) SERE in their own projects, but **they do not show any sample code in Katalon Studio that enable you to reproduce the SERE in your hand.** Without any no codes shared, the discussions were ambiguous, resulting no idea what to do next.
 
 ## Reference
 
-I refered to
-[Baeldung, Selenium StaleElementReferenceException](https://www.baeldung.com/selenium-staleelementreferenceexception) to understand what SERE is.
+In order to under stand what Stale Element Reference Exception is, I refered to the article:
+
+-   [Baeldung, Selenium StaleElementReferenceException](https://www.baeldung.com/selenium-staleelementreferenceexception).
 
 ## Solution
 
-In this project, I would show you several test scripts. **With these sample scripts, you can firmly reproduce SERE on your machine**. The scripts are clear and concise. If you read the codes carefully, you would understand how a StaleElementReferenceException is thrown by your test scripts.
+In this project, I would show you several test scripts. **With these sample scripts, you can firmly reproduce SERE on your machine**. The scripts are short. If you read the codes carefully, you would understand how a StaleElementReferenceException is thrown by your test scripts.
 
 ## Decription
 
@@ -56,13 +57,13 @@ You can see the source at GitHub
 The page will like this soon after the page is loaded:
 
 <figure>
-<img src="images/page_just_loaded.png" alt="page just loaded" />
+<img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/page_just_loaded.png" alt="page just loaded" />
 </figure>
 
 But after 3 seconds, the `` <button id='myButton>' element is silently removed. And the button is recreated soon. The content text and the style is slightly changed, but the `id `` value remains the same.
 
 <figure>
-<img src="images/recreated_button.png" alt="recreated button" />
+<img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/recreated_button.png" alt="recreated button" />
 </figure>
 
 The JavaScript in the target HTML changes the DOM dynamically.
