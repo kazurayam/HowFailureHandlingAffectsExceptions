@@ -46,14 +46,43 @@ In this project, I would show you several test scripts. *With these sample scrip
 
 === Test Cases/TC2
 
-=== Test Cases/TC3
-
-==== How WebUI.waitForElementNotPresent(testobject, timemout) is written
-
+`com.kms.katalon.core.webui.keyword.builtin.WaitForElementVisibleKeyword`
 [source,java]
 ----
-
+    ...
+    public boolean waitForElementNotVisible(TestObject to, int timeOut, FailureHandling flowControl) throws StepFailedException {
+        return WebUIKeywordMain.runKeyword({
+            ...
+            try {
+                ...
+                try {
+                    WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
+                    WebDriverWait wait = new WebDriverWait(DriverFactory.getWebDriver(), Duration.ofSeconds(timeOut))
+                    foundElement = wait.until(new ExpectedCondition<WebElement>() {
+                                @Override
+                                public WebElement apply(WebDriver driver) {
+                                    // LINE#85 StaleElementReferenceException here!
+                                    return foundElement.isDisplayed() ? null : foundElement
+                                }
+                                ...
+                            })
+                    ...
+                    return true
+                } catch (WebElementNotFoundException e) {
+                    ...
+                    return false
+                } catch (TimeoutException e) {
+                    ...
+                    return false
+                }
+            } finally {
+                ...
+            }
+        }, ... )
+    }
 ----
+
+=== Test Cases/TC3
 
 === Test Cases/TC4
 

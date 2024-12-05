@@ -44,6 +44,9 @@ try {
 } catch (Exception e) {
 	// You can not catch SERE here
 	println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
+	println "==========================================================================="
+	e.printStackTrace()
+	println "==========================================================================="
 }
 
 WebUI.closeBrowser()

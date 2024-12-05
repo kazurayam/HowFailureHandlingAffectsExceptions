@@ -1,4 +1,4 @@
-# Reproducing Selenium StaleElementReferenceException
+# Reproducing Selenium StaleElementReferenceException in Katalon Studio
 
 -   @author kazurayam
 
@@ -6,6 +6,89 @@
 
 This is a small [Katalon Studio](https://katalon.com/katalon-studio) project for demonstration purpose. You can download the zip of this repository from the [Releases](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/releases) page, download it, unzip it, open it with your local Katalon Studio.
 
-This project provides a few sample code which can firmly reproduce the Selenium StaleElementReferenceException.
+This project provides a few sample codes which can firmly reproduce the Selenium [StaleElementReferenceException](https://javadoc.io/doc/org.seleniumhq.selenium/selenium-api/latest/org/openqa/selenium/StaleElementReferenceException.html).
 
 I created this project using Katalon Studio v10.0.0 on macOS 14.7.1 with Chrome browser v131. But this project has no dependency to the katalon versions and platforms. You should be able to run this on any version of Katalon Studio on any OS using any browser.
+
+## Problem to solve
+
+I would use an achronym "SERE" (**S**tale **E**lement **R**eference **E**xception) in this article for short.
+
+In the [Katalon Community](https://forum.katalon.com/), there a lot of topics about SERE:
+
+-   [Unable to catch StaleElementReferenceException using try/catch mehcanism](https://forum.katalon.com/t/unable-to-catch-staleelementreferenceexception-using-try-catch-mehcanism/100180)
+
+-   [Katalon Studio Fails to Handle StaleElementReferenceException](https://forum.katalon.com/t/katalon-studio-fails-to-handle-staleelementreferenceexception/156753)
+
+-   [Ways to fix the StaleElementReferenceExcetpion (and similar exception)](https://forum.katalon.com/t/ways-to-fix-the-staleelementreferenceexception-and-similar-exception/112355)
+
+-   [How to fix StaleElementReferenceException: stale element reference: element is not attached to the page document](https://forum.katalon.com/t/how-to-fix-staleelementreferenceexception-stale-element-reference-element-is-not-attached-to-the-page-document/63304)
+
+-   [Headless Chrome Browser - getting StaleElementReferenceException for some elements](https://forum.katalon.com/t/headless-chrome-browser-getting-staleelementreferenceexception-for-some-elements/47348)
+
+Please make a search in the forum to look up more
+
+The posters were eager how to find out some way to fix/manage/avoid SERE, and in most cases they failed. The topis they posted are still open (unresolved) today.
+
+I found a common shortcoming in these posts about SERE. They eagerly ask for help for fixing (avoiding) SERE in their own projects, but **they do not show any sample runnable code in Katalon Studio that enable you to reproduce the SERE.** They are not motivated to understand SERE, they just want to get rid of SERE. With this attitude, I don’t think they would ever be successful.
+
+## Reference
+
+I refered to
+[Baeldung, Selenium StaleElementReferenceException](https://www.baeldung.com/selenium-staleelementreferenceexception) to understand what SERE is.
+
+## Solution
+
+In this project, I would show you several test scripts. **With these sample scripts, you can firmly reproduce SERE on your machine**. The scripts are clear and concise. If you read the codes carefully, you would understand how a StaleElementReferenceException is thrown by your test scripts.
+
+## Decription
+
+### target.html
+
+### Object Repository/myButton.rs
+
+### Test Cases/TC1
+
+### Test Cases/TC2
+
+`com.kms.katalon.core.webui.keyword.builtin.WaitForElementVisibleKeyword`
+
+        ...
+        public boolean waitForElementNotVisible(TestObject to, int timeOut, FailureHandling flowControl) throws StepFailedException {
+            return WebUIKeywordMain.runKeyword({
+                ...
+                try {
+                    ...
+                    try {
+                        WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
+                        WebDriverWait wait = new WebDriverWait(DriverFactory.getWebDriver(), Duration.ofSeconds(timeOut))
+                        foundElement = wait.until(new ExpectedCondition<WebElement>() {
+                                    @Override
+                                    public WebElement apply(WebDriver driver) {
+                                        // LINE#85 StaleElementReferenceException here!
+                                        return foundElement.isDisplayed() ? null : foundElement
+                                    }
+                                    ...
+                                })
+                        ...
+                        return true
+                    } catch (WebElementNotFoundException e) {
+                        ...
+                        return false
+                    } catch (TimeoutException e) {
+                        ...
+                        return false
+                    }
+                } finally {
+                    ...
+                }
+            }, ... )
+        }
+
+### Test Cases/TC3
+
+### Test Cases/TC4
+
+## Conclusion
+
+If you encountered a StaleElementReferenceException, you need to study how your target web page is written, especially how JavaScript works inside the page. Unless you understand how your target web page is dynamically modifed by JavaScript, you would not be able to avoid StaleElementReferenceException to occure in your Katalon project. Without knowing the internal of your target web page, it is impossible fix that issue. You should not blame Katalon Studio that it does not help you much for resolving issues about SERE.

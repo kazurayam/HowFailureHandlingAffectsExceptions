@@ -44,12 +44,16 @@ try {
 	// a new <button id='myButton'> was recreated.
 	// The verifyElementNotPresent keyword will not notice the change.
 	// The keyword will see the HTML node stays present untile the timeout expires
-	WebUI.verifyElementNotPresent(myButtonTestObject, 
+	WebUI.waitForElementNotClickable(myButtonTestObject, 
 		                        10,
 								FailureHandling.STOP_ON_FAILURE)
 	// so the keyword will throw a SERE
 } catch (Exception e) {
 	println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
+	println "==========================================================================="
+	e.printStackTrace()
+	println "==========================================================================="
+
 }
 
 WebUI.closeBrowser()
