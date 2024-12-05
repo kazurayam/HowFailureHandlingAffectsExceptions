@@ -34,7 +34,7 @@ https://www.baeldung.com/selenium-staleelementreferenceexception[Baeldung, Selen
 
 == Solution
 
-In this project, I would show you 3 Test Case script. With these scripts, you can firmly reproduce SERE on your machine. The scripts are clear and concise, which will tell you in which case a StaleElementReferenceException is thrown by your test case scripts.
+In this project, I would show you several test scripts. *With these sample scripts, you can firmly reproduce SERE on your machine*. The scripts are clear and concise. If you read the codes carefully, you would understand how a StaleElementReferenceException is thrown by your test scripts.
 
 == Decription
 
@@ -47,6 +47,13 @@ In this project, I would show you 3 Test Case script. With these scripts, you ca
 === Test Cases/TC2
 
 === Test Cases/TC3
+
+==== How WebUI.waitForElementNotPresent(testobject, timemout) is written
+
+[source,java]
+----
+
+----
 
 === Test Cases/TC4
 
