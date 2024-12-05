@@ -208,6 +208,10 @@ While the keyword is in the loop, in the target web page, the intial `<button id
 
 The same senario as TC1 applies to the TC2 as well.
 
+=== Which WebUI keywords are like to throw SERE
+
+In the TC2, I pointed out that `WebUI.waitForElementNotPresent` keyword may throw a StaleElementReferenceException in a condition where the target web page dynamically changes its DOM, and the change accidentally affects to the keyword. Any other keywords behave the same? Possibly there could be many, but I haven't checked it. I just happened to find the `waitForElementNotPreset` keyword is implemented to be SERE-prone. I haven't checked the source of other keywords. I'm not going to do it.
+
 === Test Cases/TC3
 
 === Test Cases/TC4
