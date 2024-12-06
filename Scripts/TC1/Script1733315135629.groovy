@@ -12,15 +12,15 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 /**
  * TC1
- * 
- * This script can reproduce a Selenium StaleElementReferenceException (SERE).   
- * The target HTML is dynamically modifiedy by JavaScript inside it. 
+ *
+ * This script can reproduce a Selenium StaleElementReferenceException (SERE).
+ * The target HTML is dynamically modifiedy by JavaScript inside it.
  * An HTML node will be removed and recreated at 3 seconds after the initial page load.
  * A reference to the HTML node as org.openqa.selenium.WebElement object will
  * get stale by the DOM modification by JavaScript.
- * 
+ *
  * Referring to the stale WebElement object will cause a SERE.
- *          
+ *
  * @author kazurayam
  */
 // identify the location of target HTML file
@@ -40,7 +40,7 @@ TestObject myButtonTestObject = findTestObject("Object Repository/myButton")
 // make sure <button id='myButton'> is displayed in the page initially
 WebUI.verifyElementPresent(myButtonTestObject, 10, FailureHandling.STOP_ON_FAILURE)
 
-// get the reference to the HTML element <button id='myButton'> 
+// get the reference to the HTML element <button id='myButton'>
 WebElement myButtonWebElement = WebUI.findWebElement(myButtonTestObject, 10, FailureHandling.STOP_ON_FAILURE)
 
 // the test intentionally does nothing for long enough seconds
@@ -50,8 +50,8 @@ WebUI.delay(5)
 
 try {
 	// at 3 secs after the initial page loading,
-	// the old <button id='myButton'> was removed, 
-	// a new <button id='myButton'> was recreted.
+	// the old <button id='myButton'> is removed, then
+	// a new <button id='myButton'> is recreted.
 	myButtonWebElement.click()  // this statement will throw a StaleElementReferenceException
 } catch (Exception e) {
 	WebUI.comment(">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<")

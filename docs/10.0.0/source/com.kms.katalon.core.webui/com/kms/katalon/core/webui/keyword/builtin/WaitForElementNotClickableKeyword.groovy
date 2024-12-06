@@ -51,8 +51,8 @@ import com.kms.katalon.core.webui.keyword.internal.WebUIAbstractKeyword
 import com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain
 import com.kms.katalon.core.webui.util.FileUtil
 
-@Action(value = "waitForElementNotVisible")
-public class WaitForElementNotVisibleKeyword extends WebUIAbstractKeyword {
+@Action(value = "waitForElementNotClickable")
+public class WaitForElementNotClickableKeyword extends WebUIAbstractKeyword {
 
     @CompileStatic
     @Override
@@ -66,39 +66,38 @@ public class WaitForElementNotVisibleKeyword extends WebUIAbstractKeyword {
         TestObject to = getTestObject(params[0])
         int timeOut = (int) params[1]
         FailureHandling flowControl = (FailureHandling)(params.length > 2 && params[2] instanceof FailureHandling ? params[2] : RunConfiguration.getDefaultFailureHandling())
-        return waitForElementNotVisible(to, timeOut, flowControl)
+        return waitForElementNotClickable(to,timeOut,flowControl)
     }
 
-    public boolean waitForElementNotVisible(TestObject to, int timeOut, FailureHandling flowControl) throws StepFailedException {
+    public boolean waitForElementNotClickable(TestObject to, int timeOut, FailureHandling flowControl) throws StepFailedException {
         return WebUIKeywordMain.runKeyword({
             boolean isSwitchIntoFrame = false
             try {
                 WebUiCommonHelper.checkTestObjectParameter(to)
                 timeOut = WebUiCommonHelper.checkTimeout(timeOut)
-                isSwitchIntoFrame = WebUiCommonHelper.switchToParentFrame(to, timeOut)
                 try {
+                    isSwitchIntoFrame = WebUiCommonHelper.switchToParentFrame(to, timeOut)
                     WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
                     WebDriverWait wait = new WebDriverWait(DriverFactory.getWebDriver(), Duration.ofSeconds(timeOut))
                     foundElement = wait.until(new ExpectedCondition<WebElement>() {
                                 @Override
                                 public WebElement apply(WebDriver driver) {
-                                    return foundElement.isDisplayed() ? null : foundElement
-                                }
-
-                                @Override
-                                public String toString() {
-                                    return "visibility of " + foundElement
+                                    if (foundElement.isEnabled()) {
+                                        return null
+                                    } else {
+                                        return foundElement
+                                    }
                                 }
                             })
                     if (foundElement != null) {
-                        logger.logPassed(MessageFormat.format(StringConstants.KW_LOG_PASSED_OBJ_X_IS_NOT_VISIBLE, to.getObjectId()))
+                        logger.logPassed(MessageFormat.format(StringConstants.KW_LOG_PASSED_OBJ_X_IS_NOT_CLICKABLE, to.getObjectId()))
                     }
                     return true
                 } catch (WebElementNotFoundException e) {
                     logger.logWarning(e.getMessage(), null, e)
                     return false
                 } catch (TimeoutException e) {
-                    logger.logWarning(MessageFormat.format(StringConstants.KW_MSG_OBJ_IS_VISIBLE_AFTER_X_SEC, [to.getObjectId(), timeOut] as Object[]), null, e)
+                    logger.logWarning(MessageFormat.format(StringConstants.KW_MSG_OBJ_IS_CLICKABLE_AFTER_X_SEC, [to.getObjectId(), timeOut] as Object[]), null, e)
                     return false
                 }
             } finally {
@@ -106,7 +105,7 @@ public class WaitForElementNotVisibleKeyword extends WebUIAbstractKeyword {
                     WebUiCommonHelper.switchToDefaultContent()
                 }
             }
-        }, flowControl, RunConfiguration.getTakeScreenshotOption(), (to != null) ? MessageFormat.format(StringConstants.KW_MSG_CANNOT_WAIT_OBJ_X_TO_BE_NOT_VISIBLE, to.getObjectId())
-        : StringConstants.KW_MSG_CANNOT_WAIT_FOR_OBJ_TO_BE_NOT_VISIBLE)
+        }, flowControl, RunConfiguration.getTakeScreenshotOption(), (to != null) ? MessageFormat.format(StringConstants.KW_MSG_CANNOT_WAIT_OBJ_X_TO_BE__NOTCLICKABLE, to.getObjectId())
+        : StringConstants.KW_MSG_CANNOT_WAIT_FOR_OBJ_TO_BE_NOT_CLICKABLE)
     }
 }

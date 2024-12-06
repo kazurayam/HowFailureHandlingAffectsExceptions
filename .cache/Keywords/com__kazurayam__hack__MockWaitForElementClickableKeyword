@@ -1,0 +1,14 @@
+{
+  "keywordFileContentHash": "F2FC158C23332745008B2911FD0B56EC",
+  "keywordClasses": [
+    {
+      "name": "com.kazurayam.hack.MockWaitForElementNotClickableKeyword",
+      "keywordMethods": []
+    },
+    {
+      "name": "com.kazurayam.hack.MockWaitForElementNotClickableKeyword$1",
+      "keywordMethods": []
+    }
+  ],
+  "javadocParsed": true
+}

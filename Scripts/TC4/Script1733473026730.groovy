@@ -5,21 +5,20 @@ import java.nio.file.Paths
 
 import org.openqa.selenium.WebElement
 
+import com.kazurayam.hack.MockWaitForElementNotClickableKeyword
 import com.kms.katalon.core.configuration.RunConfiguration
 import com.kms.katalon.core.model.FailureHandling
 import com.kms.katalon.core.testobject.TestObject
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 /**
- * TC2
+ * TC4
  *
- * This script can reproduce a Selenium StaleElementReferenceException (SERE).
- * The target HTML is dynamically modified by JavaScript inside it.
- * An HTML node will be removed and recreated at 3 seconds after the initial page load.
- *
- * WebUI.verifyElementNotPresent keyword against the problem HTML element will cause
- * an SERE.
- *
+ * A small modification from TC2.
+ * TC4 calls com.kazurayam.hack.MockWaitForElementNotClickable() keyword.
+ * TC4 does NOT throw StaleElementReferenceException because
+ * the MockWaitForElementNotClickable class is hacked.
+ * 
  * @author kazurayam
  */
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
@@ -35,15 +34,11 @@ WebUI.setViewPortSize(800, 600)
 
 TestObject myButtonTestObject = findTestObject("Object Repository/myButton")
 
-// make sure <button id='myButton'> is displayed in the page initially
 WebUI.verifyElementPresent(myButtonTestObject, 10, FailureHandling.STOP_ON_FAILURE)
 
 try {
-	// at 3 secs after the initial page loading,
-	// the old <button id='myButton'> was removed, but soon
-	// a new <button id='myButton'> was recreated.
-	// The keyword will see the HTML node stays clickable untile the timeout expires
-	WebUI.waitForElementNotClickable(myButtonTestObject,
+	// the following statement does NOT throw StaleElementReferenceException
+	boolean b = new MockWaitForElementNotClickableKeyword().waitForElementNotClickable(myButtonTestObject,
 		                        10,
 								FailureHandling.STOP_ON_FAILURE)
 	// so the keyword will throw a SERE
