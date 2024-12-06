@@ -10,7 +10,7 @@ This Katalon project provides a few sample codes which can firmly reproduce the 
 
 I created this project using Katalon Studio v10.0.0 on macOS 14.7.1 with Chrome browser v131. But this project has no dependency to the katalon versions and platforms. You should be able to run this on any version of Katalon Studio on any OS using any browser.
 
-## Achronim "SERE"
+## Achronym "SERE"
 
 I would use an achronym "SERE" (**S**tale **E**lement **R**eference **E**xception) in this article for short.
 
@@ -333,7 +333,17 @@ While the keyword is in the loop, in the target web page, the initial `<button i
 
 ### Which WebUI keywords are likely to throw SERE?
 
-In the TC2, I pointed out that the `WebUI.waitForElementNotPresent` keyword is likely to throw a StaleElementReferenceException. Any other keywords would behave the same? Yes, possibly there are many other keywords. I just happened to find the `waitForElementNotPreset` keyword to be SERE-prone. I haven’t checked the source of other keywords.
+In the TC2, I pointed out that the `WebUI.waitForElementNotPresent` keyword is likely to throw a StaleElementReferenceException. Any other keywords would behave the same?
+
+In the [Test Cases/TC5](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC2/Script1733285851173.groovy), I pick up just a few other WebUI keywords and found the following 2 built-in keywords threw SERE.
+
+-   WebUI.waitForElementNotHasAttribute
+
+-   WebUI.waitForElementNotVisible
+
+There could be more.
+
+It was interesting to find that the `WebUI.WebUI.waitForElementNotPresent` keyword did not threw SERE. I checked its Groovy source code and found it is implemented nicely so that it does not threw SERE. Hey, Katalon! You already know how to prevent SERE. Why don’t you do the same for all keywords!?
 
 ### Test Cases/TC3
 
