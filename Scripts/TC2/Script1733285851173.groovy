@@ -13,12 +13,8 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 /**
  * TC2
  *
- * This script can reproduce a Selenium StaleElementReferenceException (SERE).
- * The target HTML is dynamically modified by JavaScript inside it.
- * An HTML node will be removed and recreated at 3 seconds after the initial page load.
- *
- * WebUI.verifyElementNotPresent keyword against the problem HTML element will cause
- * an SERE.
+ * This script demonstrates the WebUI.waitForElementNotClickable keyword throws
+ * Selenium StaleElementReferenceException (SERE).
  *
  * @author kazurayam
  */
@@ -43,10 +39,11 @@ try {
 	// the old <button id='myButton'> was removed, but soon
 	// a new <button id='myButton'> was recreated.
 	// The keyword will see the HTML node stays clickable untile the timeout expires
+  // However, the keyword throws a SERE for some reason.
+  // Do you know why?
 	WebUI.waitForElementNotClickable(myButtonTestObject,
 		                        10,
 								FailureHandling.STOP_ON_FAILURE)
-	// so the keyword will throw a SERE
 } catch (Exception e) {
 	println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
 	println "==========================================================================="

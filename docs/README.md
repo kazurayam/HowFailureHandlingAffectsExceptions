@@ -216,12 +216,8 @@ See the source of [Test Cases/TC2](https://github.com/kazurayam/StaleElementRefe
     /**
      * TC2
      *
-     * This script can reproduce a Selenium StaleElementReferenceException (SERE).
-     * The target HTML is dynamically modified by JavaScript inside it.
-     * An HTML node will be removed and recreated at 3 seconds after the initial page load.
-     *
-     * WebUI.verifyElementNotPresent keyword against the problem HTML element will cause
-     * an SERE.
+     * This script demonstrates the WebUI.waitForElementNotClickable keyword throws
+     * Selenium StaleElementReferenceException (SERE).
      *
      * @author kazurayam
      */
@@ -246,10 +242,11 @@ See the source of [Test Cases/TC2](https://github.com/kazurayam/StaleElementRefe
         // the old <button id='myButton'> was removed, but soon
         // a new <button id='myButton'> was recreated.
         // The keyword will see the HTML node stays clickable untile the timeout expires
+      // However, the keyword throws a SERE for some reason.
+      // Do you know why?
         WebUI.waitForElementNotClickable(myButtonTestObject,
                                     10,
                                     FailureHandling.STOP_ON_FAILURE)
-        // so the keyword will throw a SERE
     } catch (Exception e) {
         println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
         println "==========================================================================="
@@ -285,7 +282,7 @@ When I ran the `TC2`, I saw the following messages in the console. You see, a SE
     12月 05, 2024 10:01:55 午後 com.kms.katalon.core.logging.KeywordLogger endTest
     情報: END Test Cases/TC2
 
-Please find that the Exception was raised at `(WaitForElementNotClickableKeyword.groovy:108)`. So we should check the source code of Katalon Studio at [`com.kms.katalon.core.webui.keyword.builtin.WaitForElementNotClickableKeyword`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/docs/10.0.0/source/com.kms.katalon.core.webui/com/kms/katalon/core/webui/keyword/builtin/WaitForElementNotVisibleKeyword.groovy)
+Please find that the Exception was raised at `(WaitForElementNotClickableKeyword.groovy:108)`. So we should check the source code of Katalon Studio at [`com.kms.katalon.core.webui.keyword.builtin.WaitForElementNotClickableKeyword`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/docs/10.0.0/source/com.kms.katalon.core.webui/com/kms/katalon/core/webui/keyword/builtin/WaitForElementNotClickableKeyword.groovy)
 
     package com.kms.katalon.core.webui.keyword.builtin
     ...
@@ -453,33 +450,60 @@ You can see there is no output from the statement
 
 This implies that no exception was thrown out of a keyword call because `FailureHandling.CONTINUE_ON_FAILURE` was specified.
 
-### Test Cases/TC4 with the waitForElementNotClickable hacked
+### Test Cases/TC4, the final resolution
 
-The TC2 proved that the `WebUI.waitForElementNotClickable` keyword sometimes throw a StaleElementReferenceException.
+The TC2 demonstrates that the `WebUI.waitForElementNotClickable` keyword occasionally throws a StaleElementReferenceException.
 
-Is it possible to change the keyword so that it does not throw SERE? --- Yes. It is possbile by a small change in the implementation Groovy code.
+Can I fix this problematic Katlaon built-in keyword? --- Yes, I can propose an idea. Let me describe it to Katalaon.
 
-I made [`Test Cases/TC4`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC4/Script1733473026730.groovy). TC4 is almost similar to TC2. TC4 calls `com.kazurayam.hack.MockWaitForElementNotClickableKeyword` class instead for `WebUI.waitForElementNotClickable` keyword.
+I made 2 codes:
+- [`Test Cases/TC4`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC4/Script1733473026730.groovy)
+- [`Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy)
 
-When I ran the TC4, it did not throw SERE. So, the problem has been resolved.
+The TC4 is almost similar to the TC2. The TC4 calls `com.kazurayam.hack.MockWaitForElementNotClickableKeyword` class instead of the `WebUI.waitForElementNotClickable` keyword. When I ran the TC4, it threw no SERE. So, the problem has been resolved.
 
 <figure>
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/TC4.png" alt="TC4" />
 </figure>
 
-I made a custom Groovy class [`Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy). This class is almost similar to the built-in keyword class but different in that it does NOT repeat referring to an instance of `org.openqa.selenium.WebElement`, rather it recreates instance of `WebElement` everytime it needs a reference to the `<button id='myBook'>` :
+Let’s compare the source of 2 classes to see what’s the difference:
+
+#### com.kms.katalon.core.webui.keyword.builtin.WaitForElementNotClickable
+
+This code is likely to throw SERE.
 
     ...
                     try {
-                        ...
+                        WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
+                        WebDriverWait wait = new WebDriverWait(DriverFactory.getWebDriver(), Duration.ofSeconds(timeOut))
+                        foundElement = wait.until(new ExpectedCondition<WebElement>() {
+                                    @Override
+                                    public WebElement apply(WebDriver driver) {
+                                        if (foundElement.isEnabled()) {
+                                            return null
+                                        } else {
+                                            return foundElement
+                                        }
+                                    }
+                                })
+                        if (foundElement != null) {
+                            ...
+                        }
+                        return true
+    ...
+
+#### com.kazurayam.hack.MockWaitForElementNotClickable
+
+This code does not throw any SERE.
+
+    ...
+                    try {
               WebDriverWait wait = new WebDriverWait(DriverFactory.getWebDriver(), Duration.ofSeconds(timeOut))
                         WebElement webElement = wait.until(new ExpectedCondition<WebElement>() {
                                     @Override
                                     public WebElement apply(WebDriver driver) {
-
                       // recreate a reference to the <button id='myBook'>
                                         WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
-
                       if (foundElement.isEnabled()) {
                                             return null
                                         } else {
@@ -489,7 +513,11 @@ I made a custom Groovy class [`Keywords/com/kazurayam/hack/MockWaitForElementCli
                                 })
     ...
 
-TC4 and `MockWaitForElementClickableKeyword` class proves that Katalon should be able to resolve all the issues around SERE by fixing the fragility in the WebUI keywords that could potentially throw StaleElementReferenceException. I showed the way. It is up to Katalon if they address it or not.
+Please read these code and find the variable `WebElement foundElement` is initialized and refered to.
+
+In the built-in keyword, the `foundElement` variable is created once and refered to many times. The reference to the `<button id='myButton'>` element has good chance to get stale.
+
+On the other hand, in my class, the `foundElement` variable is scoped narrow; the variable resides inside the `apply` method. The `foundElement` variable is created once and refered to only once and thrown away. The reference to the `<button id='myButton'>` will have no chance to get stale.
 
 ## Conclusion
 
@@ -499,13 +527,15 @@ I presented the reason how a StaleElementReferenceException is raised by Katlaon
 
 2.  the WebUI keyword is implemented like `WebUI.waitForElementNotClickable`: a variable of type `org.openqa.selenium.WebElement` is repeatedly referred to while the `WebElement` turned to be stale due to the dynamic DOM change by JavaScript in the target web page.
 
-Lesson learned: when you encountered a SERE, you need to study how your target web page is written. You need to be aware how JavaScript works inside the page.
+Lesson learned:
 
-Provided that you studied and clarified the target page’s dynamic nature, you need to check the source of WebUI keywords that caused a SERE.
+-   when you encountered a SERE, you need to study how your target web page is written. You need to be aware how JavaScript works inside the page.
 
-Then, after all, how can you avoid SERE at all?
+-   you need to read the source code of WebUI keywords if it threw a SERE.
 
-Well I don’t know. There is no silver bullet. Please find your way for yourself.
+After all, how can you avoid SERE at all? Well I don’t know. There is no silver bullet. Please find your way for yourself.
+
+In the TC4, I showed how to change the Groovy codes to fix a SERE-prone built-in keyword. I hope Katalon to review all the built-in keywords and fix those problematic keywords.
 
 ## Microsoft Azure DevOps log-in process --- a death zone
 
