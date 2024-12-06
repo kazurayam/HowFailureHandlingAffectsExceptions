@@ -454,7 +454,7 @@ This implies that no exception was thrown out of a keyword call because `Failure
 
 The TC2 demonstrates that the `WebUI.waitForElementNotClickable` keyword occasionally throws a StaleElementReferenceException.
 
-Can I fix this problematic Katlaon built-in keyword? --- Yes, I can propose an idea. Let me describe it to Katalaon.
+Can I fix this problematic Katlaon built-in keyword? --- Yes, I can propose an idea. Let me explain it.
 
 I made 2 codes:
 - [`Test Cases/TC4`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC4/Script1733473026730.groovy)
@@ -473,23 +473,23 @@ Let’s compare the source of 2 classes to see what’s the difference:
 This code is likely to throw SERE.
 
     ...
-                    try {
-                        WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
-                        WebDriverWait wait = new WebDriverWait(DriverFactory.getWebDriver(), Duration.ofSeconds(timeOut))
-                        foundElement = wait.until(new ExpectedCondition<WebElement>() {
-                                    @Override
-                                    public WebElement apply(WebDriver driver) {
-                                        if (foundElement.isEnabled()) {
-                                            return null
-                                        } else {
-                                            return foundElement
-                                        }
-                                    }
-                                })
-                        if (foundElement != null) {
-                            ...
-                        }
-                        return true
+            try {
+              WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
+              WebDriverWait wait = new WebDriverWait(DriverFactory.getWebDriver(), Duration.ofSeconds(timeOut))
+              foundElement = wait.until(new ExpectedCondition<WebElement>() {
+                @Override
+                public WebElement apply(WebDriver driver) {
+                  if (foundElement.isEnabled()) {
+                    return null
+                  } else {
+                    return foundElement
+                  }
+                }
+              })
+              if (foundElement != null) {
+                ...
+              }
+              return true
     ...
 
 #### com.kazurayam.hack.MockWaitForElementNotClickable
@@ -497,27 +497,27 @@ This code is likely to throw SERE.
 This code does not throw any SERE.
 
     ...
-                    try {
+            try {
               WebDriverWait wait = new WebDriverWait(DriverFactory.getWebDriver(), Duration.ofSeconds(timeOut))
-                        WebElement webElement = wait.until(new ExpectedCondition<WebElement>() {
-                                    @Override
-                                    public WebElement apply(WebDriver driver) {
-                      // recreate a reference to the <button id='myBook'>
-                                        WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
-                      if (foundElement.isEnabled()) {
-                                            return null
-                                        } else {
-                                            return foundElement
-                                        }
-                                    }
-                                })
+              WebElement webElement = wait.until(new ExpectedCondition<WebElement>() {
+                @Override
+                public WebElement apply(WebDriver driver) {
+                  // recreate a reference to the <button id='myBook'>
+                  WebElement foundElement = WebUIAbstractKeyword.findWebElement(to, timeOut)
+                  if (foundElement.isEnabled()) {
+                    return null
+                  } else {
+                    return foundElement
+                  }
+                }
+              })
     ...
 
-Please read these code and find the variable `WebElement foundElement` is initialized and refered to.
+Please compare these codes and find out how the variable `WebElement foundElement` is initialized and refered to.
 
-In the built-in keyword, the `foundElement` variable is created once and refered to many times. The reference to the `<button id='myButton'>` element has good chance to get stale.
+In the built-in keyword, the `foundElement` variable is created once outside the scope of `wait` loop and refered to many times inside the `wait` loop. The reference to the `<button id='myButton'>` element has enough chance to get stale.
 
-On the other hand, in my class, the `foundElement` variable is scoped narrow; the variable resides inside the `apply` method. The `foundElement` variable is created once and refered to only once and thrown away. The reference to the `<button id='myButton'>` will have no chance to get stale.
+On the other hand, in my class, the `foundElement` variable is scoped narrow; the variable resides inside the `apply` method. The `foundElement` variable is created once and refered to only once and immediately thrown away. The reference to the `<button id='myButton'>` will have no chance to get stale.
 
 ## Conclusion
 
@@ -535,18 +535,20 @@ Lesson learned:
 
 After all, how can you avoid SERE at all? Well I don’t know. There is no silver bullet. Please find your way for yourself.
 
-In the TC4, I showed how to change the Groovy codes to fix a SERE-prone built-in keyword. I hope Katalon to review all the built-in keywords and fix those problematic keywords.
+In the TC4, I showed how to change the Groovy codes to fix a SERE-prone built-in keyword. I hope Katalon to address my suggestion and fix the problematic built-in keywords.
 
 ## Microsoft Azure DevOps log-in process --- a death zone
 
-In many forum posts, people encountered SERE while they tried to automate the login process into Microsoft Azure DevOps.
+In many Katalon forum posts, people encountered SERE while they tried to automate the login process into Microsoft Azure DevOps.
 
 <figure>
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MS_Azure_sign_in_page.png" alt="MS Azure sign in page" />
 </figure>
 
-I also tried to "fix SERE" at the MS Azure login page, but failed. See [my previous post](https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973/103).
+I tried to "fix SERE" at the MS Azure login page, but I failed. See [my previous post](https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973/103).
 
-The log-in pages of Microsoft Azure are highly JavaScript-driven. I would warn you, it’s terribly difficult to automate. You would certainly get StaleElementReferenceExceptions. I am afraid, you would fail to get rid of the SERE. It is primarily due to the way how the target page is coded. You shouldn’t blame Katalon Studio for the difficulty.
+The log-in pages of Microsoft Azure are highly JavaScript-driven. I would warn you, it’s terribly difficult to automate. You would get SERE there. You would fail to get rid of SERE. Primarily it is due to the way how the target page is implemented. Don’t blame Katalon Studio for the difficulty.
 
-The StaleElementReferenceException keeps up with any Selenium WebDriver-based browser-automation tools including Katlaon Studio. On the other hand, there are new tools based on CDP/BiDi technologies. For example, [Playwright](https://playwright.dev/). I guess that those new comers work better for the Azure DevOps log-in process. I hope someone to try it.
+## Other tools?
+
+The StaleElementReferenceException keeps up with any Selenium WebDriver-based browser-automation tools including Katlaon Studio. On the other hand, there are new browser-automation tools based on CDP/BiDi technologies. For example, [Playwright](https://playwright.dev/). I guess that those new comers work better for the Azure DevOps log-in process. I hope someone to try it and report their experiences back here.
