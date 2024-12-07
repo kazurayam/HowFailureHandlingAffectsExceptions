@@ -333,7 +333,7 @@ While the keyword is in the loop, in the target web page, the initial `<button i
 
 ### Which WebUI keywords are likely to throw SERE?
 
-In the TC2, I pointed out that the `WebUI.waitForElementNotPresent` keyword is likely to throw a StaleElementReferenceException. Any other keywords would behave the same?
+In the TC2, I pointed out that the `WebUI.waitForElementNotClickable` keyword is likely to throw a StaleElementReferenceException. Any other keywords would behave the same?
 
 In the [Test Cases/TC5](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC2/Script1733285851173.groovy), I pick up just a few other WebUI keywords and found the following 2 built-in keywords threw SERE.
 
@@ -343,7 +343,8 @@ In the [Test Cases/TC5](https://github.com/kazurayam/StaleElementReferenceExcept
 
 There could be more.
 
-It was interesting to find that the `WebUI.WebUI.waitForElementNotPresent` keyword did not threw SERE. I checked its Groovy source code and found it is implemented nicely so that it does not threw SERE. Hey, Katalon! You already know how to prevent SERE. Why don’t you do the same for all keywords!?
+It was interesting to find that the `WebUI.waitForElementNotPresent` keyword did not throw SERE.
+I checked its Groovy source code and found it is implemented nicely so that it prevents SERE.
 
 ### Test Cases/TC3
 
