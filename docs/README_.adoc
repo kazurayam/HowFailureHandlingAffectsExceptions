@@ -47,7 +47,7 @@ At first, I created a HTML file as the target of my tests. The file located in t
 
 You can see the source at GitHub
 
-- https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/targetPage.html
+- https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/targetPage.html
 
 When the page opens, it will look like this:
 
@@ -61,7 +61,7 @@ The HTML contains the following JavaScript. This changes the DOM dynamically.
 
 [source,javascript]
 ----
-include::../targetPage.html[lines=28..46]
+include::../docs/targetPage.html[lines=28..46]
 ----
 
 === Object Repository/myButton

@@ -16,11 +16,11 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
  * A variation derived from the TC2.
  * This script list the WebUI keywords that takes a timeout second as argument to check
  * if these raises Selenium StaleElementPresentException.
- * 
+ *
  * @author kazurayam
  */
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-Path html = projectDir.resolve("targetPage.html")
+Path html = projectDir.resolve("docs/targetPage.html")
 URL htmlURL = html.toFile().toURI().toURL()
 String urlString = htmlURL.toExternalForm()
 WebUI.comment("navigating to " + urlString)
@@ -36,11 +36,10 @@ TestObject myButtonTestObject = findTestObject("Object Repository/myButton")
 WebUI.verifyElementPresent(myButtonTestObject, 10, FailureHandling.STOP_ON_FAILURE)
 
 try {
-	WebUI.verifyElementNotHasAttribute(myButtonTestObject, 'clazz', 5, FailureHandling.STOP_ON_FAILURE)
 	//WebUI.waitForElementNotHasAttribute(myButtonTestObject, 'class', 5, FailureHandling.STOP_ON_FAILURE)  // => threw SERE
 	//WebUI.waitForElementNotPresent(myButtonTestObject, 5, FailureHandling.STOP_ON_FAILURE)                  // => no SERE
-	//WebUI.waitForElementNotVisible(myButtonTestObject, 5, FailureHandling.STOP_ON_FAILURE)                  // => threw SERE
-	
+	WebUI.waitForElementNotVisible(myButtonTestObject, 5, FailureHandling.STOP_ON_FAILURE)                  // => threw SERE
+
 } catch (Exception e) {
 	println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
 	println "==========================================================================="

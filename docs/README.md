@@ -52,7 +52,7 @@ At first, I created a HTML file as the target of my tests. The file located in t
 
 You can see the source at GitHub
 
--   <https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/targetPage.html>
+-   <https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/targetPage.html>
 
 When the page opens, it will look like this:
 
@@ -128,7 +128,7 @@ See the source of
      */
     // identify the location of target HTML file
     Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-    Path html = projectDir.resolve("targetPage.html")
+    Path html = projectDir.resolve("docs/targetPage.html")
     URL htmlURL = html.toFile().toURI().toURL()
     String urlString = htmlURL.toExternalForm()
     WebUI.comment("navigating to " + urlString)
@@ -222,7 +222,7 @@ See the source of [Test Cases/TC2](https://github.com/kazurayam/StaleElementRefe
      * @author kazurayam
      */
     Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-    Path html = projectDir.resolve("targetPage.html")
+    Path html = projectDir.resolve("docs/targetPage.html")
     URL htmlURL = html.toFile().toURI().toURL()
     String urlString = htmlURL.toExternalForm()
     WebUI.comment("navigating to " + urlString)
@@ -365,16 +365,16 @@ I would show one more script. The TC3 is almost the same as TC2 except one line 
      * TC3
      *
      * A variation derived from the TC2.
-     * 
-     * This script demonstrates that FailureHandling.CONTINUE_ON_FAILURE makes 
+     *
+     * This script demonstrates that FailureHandling.CONTINUE_ON_FAILURE makes
      * all keywords silent.
      * No exception will be raised by a keyword invokation.
      * Your Test Case script can not catch any Exception.
-     * 
+     *
      * @author kazurayam
      */
     Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-    Path html = projectDir.resolve("targetPage.html")
+    Path html = projectDir.resolve("docs/targetPage.html")
     URL htmlURL = html.toFile().toURI().toURL()
     String urlString = htmlURL.toExternalForm()
     WebUI.comment("navigating to " + urlString)

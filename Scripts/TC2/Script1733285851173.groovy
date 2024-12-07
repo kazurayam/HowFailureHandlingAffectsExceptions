@@ -19,7 +19,7 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
  * @author kazurayam
  */
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-Path html = projectDir.resolve("targetPage.html")
+Path html = projectDir.resolve("docs/targetPage.html")
 URL htmlURL = html.toFile().toURI().toURL()
 String urlString = htmlURL.toExternalForm()
 WebUI.comment("navigating to " + urlString)

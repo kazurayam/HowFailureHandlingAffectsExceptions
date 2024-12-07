@@ -18,11 +18,11 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
  * TC4 calls com.kazurayam.hack.MockWaitForElementNotClickable() keyword.
  * TC4 does NOT throw StaleElementReferenceException because
  * the MockWaitForElementNotClickable class is hacked.
- * 
+ *
  * @author kazurayam
  */
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-Path html = projectDir.resolve("targetPage.html")
+Path html = projectDir.resolve("docs/targetPage.html")
 URL htmlURL = html.toFile().toURI().toURL()
 String urlString = htmlURL.toExternalForm()
 WebUI.comment("navigating to " + urlString)

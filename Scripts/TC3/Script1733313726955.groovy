@@ -14,16 +14,16 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
  * TC3
  *
  * A variation derived from the TC2.
- * 
- * This script demonstrates that FailureHandling.CONTINUE_ON_FAILURE makes 
+ *
+ * This script demonstrates that FailureHandling.CONTINUE_ON_FAILURE makes
  * all keywords silent.
  * No exception will be raised by a keyword invokation.
  * Your Test Case script can not catch any Exception.
- * 
+ *
  * @author kazurayam
  */
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
-Path html = projectDir.resolve("targetPage.html")
+Path html = projectDir.resolve("docs/targetPage.html")
 URL htmlURL = html.toFile().toURI().toURL()
 String urlString = htmlURL.toExternalForm()
 WebUI.comment("navigating to " + urlString)
