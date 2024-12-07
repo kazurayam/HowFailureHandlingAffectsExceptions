@@ -218,7 +218,8 @@ In the https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/b
 
 There could be more.
 
-It was interesting to find that the `WebUI.WebUI.waitForElementNotPresent` keyword did not threw SERE. I checked its Groovy source code and found it is implemented nicely so that it does not threw SERE. Hey, Katalon! You already know how to prevent SERE. Why don't you do the same for all keywords!?
+It was interesting to find that the `WebUI.waitForElementNotPresent` keyword did not threw SERE.
+I checked its Groovy source code and found it is implemented nicely so that it does not threw SERE.
 
 === Test Cases/TC3
 
