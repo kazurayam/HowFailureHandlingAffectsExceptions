@@ -361,7 +361,7 @@ Please compare these codes and find out how the variable `WebElement foundElemen
 
 In the built-in keyword, the `foundElement` variable is created once outside the scope of `wait` loop and refered to many times inside the `wait` loop. The reference to the `<button id='myButton'>` element has enough chance to get stale.
 
-On the other hand, in my class, the `foundElement` variable is scoped narrow; the variable resides inside the `apply` method. The `foundElement` variable is created once and refered to only once and immediately thrown away. The reference to the `<button id='myButton'>` will have no chance to get stale.
+On the other hand, in my class, the `foundElement` variable is scoped narrow; the variable resides inside the `apply` method. The `foundElement` variable is created once, refered to only once, then immediately thrown away. The reference to the `<button id='myButton'>` has no chance to get stale.
 
 == Conclusion
 
