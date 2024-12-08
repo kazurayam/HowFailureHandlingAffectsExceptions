@@ -534,7 +534,7 @@ On the other hand, in my class, the `foundElement` variable is scoped narrow; th
 
 I presented the reason how a StaleElementReferenceException is raised by Katlaon WebUI keywords. The Exception could be thrown with the combination of 2 factors:
 
-1.  the target web page is driven by JavaScript, which changes the page’s DOM dynamically: remove an Element, recreate an Element.
+1.  the target web page is driven by JavaScript, which changes the page’s DOM dynamically: remove an Element, recreate the Element.
 
 2.  the WebUI keyword is implemented like `WebUI.waitForElementNotClickable`: a variable of type `org.openqa.selenium.WebElement` is repeatedly referred to while the `WebElement` turned to be stale due to the dynamic DOM change by JavaScript in the target web page.
 
