@@ -541,7 +541,7 @@ Lesson learned:
 
 -   you need to read the source code of WebUI keywords if it threw a SERE.
 
-Wow can you avoid SERE at all? Well, I don’t know. There is no silver bullet. Please find your way for yourself.
+How can you avoid SERE at all? Well, I don’t know. There is no silver bullet. Please find your way for yourself.
 
 In the TC4, I showed how to fix the defect in a built-in keyword. I hope Katalon to address my suggestion and fix the problematic built-in keywords.
 
