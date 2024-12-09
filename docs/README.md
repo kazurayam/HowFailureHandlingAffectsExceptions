@@ -32,7 +32,7 @@ Please make a search in the forum to look up more
 
 The posters were eager to find out some way to fix/manage/avoid SERE but they failed. Most of these topics are still open (unresolved) today.
 
-I found a common shortcoming in these posts about SERE. The original posters ask for help for fixing (avoiding) SERE in their own projects, but **they do not provide any sample code in Katalon Studio that enable you to reproduce the SERE in your hand.** Without any no codes shared, the discussions stayed ambiguous resulting no idea what to do next.
+I found a common shortcoming in these posts about SERE. The original posters ask for help for fixing (avoiding) SERE in their own projects, but **they do not provide any sample code in Katalon Studio that enable you to reproduce the SERE in your hand.** With no codes shared, the discussions stayed ambiguous resulting no idea what to do next.
 
 ## Reference
 
@@ -46,11 +46,11 @@ In this project, I would show you several test scripts. **With these sample scri
 
 ## Decription
 
-### target.html
+### The target page
 
-At first, I created a HTML file as the target of my tests. The file located in the project’s folder: `<ProjectDir>/targetPage.html`.
+At first, I created a HTML file as the target of my tests. The file located at `<ProjectDir>/docs/targetPage.html`.
 
-You can see the source at GitHub
+You can see the HTML in action at:
 
 -   <https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/targetPage.html>
 
@@ -60,7 +60,7 @@ When the page opens, it will look like this:
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/page_just_loaded.png" alt="page just loaded" />
 </figure>
 
-But after 3 seconds, the `<button id='myButton'>` element is silently removed. And the button is recreated soon. The content text and the style is slightly changed, but the `id` value remains to be `myButton`.
+3 seconds after open, the `<button id='myButton'>` element is silently removed. And the button is recreated soon. The content text and the style is slightly changed, but the `id` value remains the same: `myButton`.
 
 <figure>
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/recreated_button.png" alt="recreated button" />
@@ -166,11 +166,11 @@ The TC1 does the following steps:
 
 1.  open browser, navigate to the targetPage.html, prepare a Test Object that selects the `<button id='myButton'>` element, makes sure the page is opened.
 
-2.  TC1 creates a variable named `myButtonWebElement` to which assigned an `org.openqa.selenium.WebElement` object that refers to the `<button id='myButton'>` element in the page.
+2.  TC1 creates a variable named `myButtonWebElement` which is type of `org.openqa.selenium.WebElement`, refers to the `<button id='myButton'>` element in the HTML DOM.
 
 3.  TC1 intentionally waits for 5 seconds.
 
-4.  On the other hand, in the opened browser, at 3 seconds after the page load, the `<button id='myButton'>` in blue color is removed. And a new `<button id='myButton'>` in grey color is created and inserted into the page.
+4.  On the other hand, in the opened browser, at 3 seconds after the page load, the `<button id='myButton'>` in blue color is removed. Then a new `<button id='myButton'>` in grey color is created.
 
 5.  After 5 seconds of wait, TC1 calls `myButtonWebElement.click()`. At this call, a `StaleElementReferenceException` will be thrown.
 
@@ -197,7 +197,7 @@ The variable `myButtonWebElement` is an instance of `org.openqa.selenium.WebElem
 
 ### Test Cases/TC2
 
-Let me show you another sample code. The TC1 referred to a variable declared as an instance of `org.openqa.selenium.WebElement` class. But usual Katalon Studio users won’t write their Test Cases using the Selenium API. They pricipally use `WebUI.*` keywords. The next TC2 calls only `WebUI` keywords (no call to the Selenium API), and it can still reproduce StaleElementReferenceException.
+Let me show you another sample code. The TC1 referred to a variable of type `org.openqa.selenium.WebElement` class. But a usual Katalon Studio user won’t use the Selenium WebDriver API. They would primarily use `WebUI.*` keywords. The next TC2 calls only `WebUI` keywords, and it stil reproduces a StaleElementReferenceException.
 
 See the source of [Test Cases/TC2](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC2/Script1733285851173.groovy).
 
@@ -325,9 +325,9 @@ Please find that the Exception was raised at `(WaitForElementNotClickableKeyword
 
 Why a StaleElementReferenceException was thrown at the Line#108?
 
-At the Line#103, a variable named `foundElement` is declared to have a reference to a `org.openqa.selenium.WebElement` object, which points to the `<button id='myButton'>` element in the target page.
+At the Line#103, a variable named `foundElement` is declared to have a reference to an `org.openqa.selenium.WebElement` object, which points to the `<button id='myButton'>` element in the target page.
 
-At the Line#108, the `WebUI.waitForElementNotClickable` keyword repeats referring to the `foundElement` until it finds the web element is not clickable any more.
+At the Line#108, the `WebUI.waitForElementNotClickable` keyword repeats referring to the `foundElement` until it find the web element is not clickable any more.
 
 While the keyword is in the loop, in the target web page, the initial `<button id='myButton'>` element is once removed; and a new `<button id='myButton'>` element will be inserted. Therefore the `WebUI.waitForElementNotClickable` keyword threws a StaleElementReferenceException. A SERA was thrown by TC2 by just the same reason as the TC1.
 
@@ -343,8 +343,7 @@ In the [Test Cases/TC5](https://github.com/kazurayam/StaleElementReferenceExcept
 
 There could be more.
 
-It was interesting to find that the `WebUI.waitForElementNotPresent` keyword did not throw SERE.
-I checked its Groovy source code and found it is implemented nicely so that it prevents SERE.
+It was interesting to find that the `WebUI.waitForElementNotPresent` keyword did not throw SERE. I checked its Groovy source code and found it is implemented nicely so that it prevents SERE.
 
 ### Test Cases/TC3
 
@@ -465,19 +464,19 @@ This implies that no exception was thrown out of a keyword call because `Failure
 
 The TC2 demonstrates that the `WebUI.waitForElementNotClickable` keyword occasionally throws a StaleElementReferenceException.
 
-Can I fix this problematic Katlaon built-in keyword? --- Yes, I can propose an idea. Let me explain it.
+Can I fix this problematic keyword? --- Yes, I can propose an idea. Let me show it.
 
 I made 2 codes:
 - [`Test Cases/TC4`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC4/Script1733473026730.groovy)
 - [`Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy)
 
-The TC4 is almost similar to the TC2. The TC4 calls `com.kazurayam.hack.MockWaitForElementNotClickableKeyword` class instead of the `WebUI.waitForElementNotClickable` keyword. When I ran the TC4, it threw no SERE. So, the problem has been resolved.
+The TC4 is similar to the TC2 but different. The TC4 calls `com.kazurayam.hack.MockWaitForElementNotClickableKeyword` class instead of the `WebUI.waitForElementNotClickable` keyword. When I ran the TC4, it threws no SERE.
 
 <figure>
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/TC4.png" alt="TC4" />
 </figure>
 
-Let’s compare the source of 2 classes to see what’s the difference:
+Let’s compare the source of 2 classes to see the difference:
 
 #### com.kms.katalon.core.webui.keyword.builtin.WaitForElementNotClickable
 
@@ -524,11 +523,9 @@ This code does not throw any SERE.
               })
     ...
 
-Please compare these codes and find out how the variable `WebElement foundElement` is initialized and refered to.
-
 In the built-in keyword, the `foundElement` variable is created once outside the scope of `wait` loop and refered to many times inside the `wait` loop. The reference to the `<button id='myButton'>` element has enough chance to get stale.
 
-On the other hand, in my class, the `foundElement` variable is scoped narrow; the variable resides inside the `apply` method. The `foundElement` variable is created once, refered to only once, then immediately thrown away. The reference to the `<button id='myButton'>` has no chance to get stale.
+On the other hand, in my class, the `foundElement` variable is scoped narrow; it resides inside the `apply` method. The `foundElement` variable is created once, refered to only once, then immediately thrown away. The reference to the `<button id='myButton'>` has no chance to get stale.
 
 ## Conclusion
 
@@ -536,7 +533,7 @@ I presented the reason how a StaleElementReferenceException is raised by Katlaon
 
 1.  the target web page is driven by JavaScript, which changes the page’s DOM dynamically: remove an Element, recreate the Element.
 
-2.  the WebUI keyword is implemented like `WebUI.waitForElementNotClickable`: a variable of type `org.openqa.selenium.WebElement` is repeatedly referred to while the `WebElement` turned to be stale due to the dynamic DOM change by JavaScript in the target web page.
+2.  the WebUI keyword is implemented like `WebUI.waitForElementNotClickable`. A variable of type `org.openqa.selenium.WebElement` is repeatedly referred to while the `WebElement` turned to be stale due to the dynamic DOM change by JavaScript in the target web page.
 
 Lesson learned:
 
@@ -544,13 +541,13 @@ Lesson learned:
 
 -   you need to read the source code of WebUI keywords if it threw a SERE.
 
-After all, how can you avoid SERE at all? Well I don’t know. There is no silver bullet. Please find your way for yourself.
+Wow can you avoid SERE at all? Well, I don’t know. There is no silver bullet. Please find your way for yourself.
 
-In the TC4, I showed how to change the Groovy codes to fix a SERE-prone built-in keyword. I hope Katalon to address my suggestion and fix the problematic built-in keywords.
+In the TC4, I showed how to fix the defect in a built-in keyword. I hope Katalon to address my suggestion and fix the problematic built-in keywords.
 
-## Microsoft Azure DevOps log-in process --- a death zone
+## Microsoft Azure DevOps log-in process --- a dangerous zone
 
-In many Katalon forum posts, people encountered SERE while they tried to automate the login process into Microsoft Azure DevOps.
+There are many posts in the Katalon user forum where people experienced SERE while they tried to automate the login process of Microsoft Azure DevOps.
 
 <figure>
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MS_Azure_sign_in_page.png" alt="MS Azure sign in page" />
@@ -558,8 +555,8 @@ In many Katalon forum posts, people encountered SERE while they tried to automat
 
 I tried to "fix SERE" at the MS Azure login page, but I failed. See [my previous post](https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973/103).
 
-The log-in pages of Microsoft Azure are highly JavaScript-driven. I would warn you, it’s terribly difficult to automate. You would get SERE there. You would fail to get rid of SERE. Primarily it is due to the way how the target page is implemented. Don’t blame Katalon Studio for the difficulty.
+The log-in pages of Microsoft Azure are highly JavaScript-driven. I would warn you, it’s terribly difficult to automate. You would get SERE there due to the way how the target page is implemented. Don’t blame Katalon Studio for the difficulty.
 
 ## Other tools?
 
-The StaleElementReferenceException keeps up with any Selenium WebDriver-based browser-automation tools including Katlaon Studio. On the other hand, there are new browser-automation tools based on CDP/BiDi technologies. For example, [Playwright](https://playwright.dev/). I guess that those new comers work better for the Azure DevOps log-in process. I hope someone to try it and report their experiences back here.
+The StaleElementReferenceException keeps up with any Selenium WebDriver-based browser-automation tools including Katlaon Studio. On the other hand, there are new browser-automation tools based on the CDP/BiDi technology. For example, [Playwright](https://playwright.dev/). I guess that those new comers work better for the Azure DevOps log-in process. I hope someone to try it and report their experiences back here.
