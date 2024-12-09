@@ -42,7 +42,7 @@ In order to understand what Stale Element Reference Exception is, I refered to t
 
 ## Solution
 
-In this project, I would show you several test scripts. **With these sample scripts, you can firmly reproduce SERE on your machine**. The scripts are short. If you read the codes carefully, you would understand how a StaleElementReferenceException is thrown.
+In this project, I would show you several test scripts in Katalon Studio. **With these sample scripts, you can firmly reproduce SERE on your machine**. The scripts are short. If you read the codes carefully, you would understand how a StaleElementReferenceException is thrown.
 
 ## Decription
 
@@ -68,7 +68,6 @@ When the page opens, it will look like this:
 
 The HTML contains the following JavaScript. This changes the DOM dynamically.
 
-      <script type="text/javascript">
         function modifyPage() {
           // remove the <button @id='myButton'>
           document.getElementById('myButton').remove();
@@ -87,6 +86,7 @@ The HTML contains the following JavaScript. This changes the DOM dynamically.
           console.log('timeout was set');
         });
       </script>
+    </body>
 
 ### Object Repository/myButton
 

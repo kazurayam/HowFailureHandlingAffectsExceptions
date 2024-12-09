@@ -37,7 +37,7 @@ In order to understand what Stale Element Reference Exception is, I refered to t
 
 == Solution
 
-In this project, I would show you several test scripts. *With these sample scripts, you can firmly reproduce SERE on your machine*. The scripts are short. If you read the codes carefully, you would understand how a StaleElementReferenceException is thrown.
+In this project, I would show you several test scripts in Katalon Studio. *With these sample scripts, you can firmly reproduce SERE on your machine*. The scripts are short. If you read the codes carefully, you would understand how a StaleElementReferenceException is thrown.
 
 == Decription
 
