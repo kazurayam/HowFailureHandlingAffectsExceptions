@@ -235,11 +235,14 @@ A stateful keyword has a variable of type `org.openqa.selenium.WebElement`, whic
 in the target page, and is kept in memory to be referred to repeatedly for long seconds.
 When the DOM is changed by JavaScript in the target page, the variable becomes stale.
 
-A stateful keyword is unreliable. It could throw StaleElementReferenceException.
+A stateless keyword doesn’t have such a variable.
 
-So, how many *stateful keywords* are there in Katalon Studio? --- Well, I don't know.
+A stateful keyword is unreliable. Occasionally it could throw a StaleElementReferenceException.
 
-I hope that Katalon to publish the list of *stateful keywords* A.S.A.P. so that the users can refrain from those risky keywords.
+I believe that all built-in keywords should be stateless in order to refrain from StaleElementReferenceException.
+
+
+So, how many *stateful keywords* are there in Katalon Studio? --- Well, I don't know. I hope that Katalon will publish the list of *stateful keywords* A.S.A.P. so that the users can refrain from those risky keywords.
 
 === Test Cases/TC3
 
