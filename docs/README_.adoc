@@ -232,15 +232,12 @@ I would like to propose a set of categorical terms:
 - **Stateful keyword**, e.g, `WebUI.waitForElementNotClickable`
 
 A stateful keyword has a variable of type `org.openqa.selenium.WebElement`, which is once gets initialized with a valid reference to a DOM element
-in the target page, and is kept in memory to be referred to repeatedly for long seconds.
-When the DOM is changed by JavaScript in the target page, the variable becomes stale.
+in the target page, and is kept in memory and is referred to repeatedly for long seconds.
+When the DOM is changed by JavaScript in the target page, the variable becomes stale. A stateful keyword is unreliable. Occationally it could throw a StaleElementReferenceException.
 
-A stateless keyword doesn’t have such a variable.
+A stateless keyword doesn't have such a variable, therefore won't throw any StaleElementReferenceException.
 
-A stateful keyword is unreliable. Occasionally it could throw a StaleElementReferenceException.
-
-I believe that all built-in keywords should be stateless in order to refrain from StaleElementReferenceException.
-
+I believe that all built-in keywords should be stateless so that they never throw StaleElementReferenceException.
 
 So, how many *stateful keywords* are there in Katalon Studio? --- Well, I don't know. I hope that Katalon will publish the list of *stateful keywords* A.S.A.P. so that the users can refrain from those risky keywords.
 
