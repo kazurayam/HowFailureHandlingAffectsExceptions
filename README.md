@@ -329,11 +329,15 @@ At the Line#103, a variable named `foundElement` is declared to have a reference
 
 At the Line#108, the `WebUI.waitForElementNotClickable` keyword repeats referring to the `foundElement` until it find the web element is not clickable any more.
 
-While the keyword is in the loop, in the target web page, the initial `<button id='myButton'>` element is once removed; and a new `<button id='myButton'>` element will be inserted. Therefore the `WebUI.waitForElementNotClickable` keyword threws a StaleElementReferenceException. A SERA was thrown by TC2 by just the same reason as the TC1.
+While the keyword is in the loop, in the target web page, the initial `<button id='myButton'>` element is once removed; and a new `<button id='myButton'>` element will be inserted.
+At this timing, the `foundElement` becomes stale. It is not referring to a valid HTML element any more.
+Therefore the `WebUI.waitForElementNotClickable` keyword threws a StaleElementReferenceException. A SERA was thrown by TC2 by just the same reason as the TC1.
 
 ### Which WebUI keywords are likely to throw SERE?
 
-In the TC2, I pointed out that the `WebUI.waitForElementNotClickable` keyword is likely to throw a StaleElementReferenceException. Any other keywords would behave the same?
+In the TC2, I pointed out that the `WebUI.waitForElementNotClickable` keyword is likely to throw a StaleElementReferenceException.
+
+Any other keywords would behave the same?
 
 In the [Test Cases/TC5](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC2/Script1733285851173.groovy), I pick up just a few other WebUI keywords and found the following 2 built-in keywords threw SERE.
 
@@ -344,6 +348,22 @@ In the [Test Cases/TC5](https://github.com/kazurayam/StaleElementReferenceExcept
 There could be more.
 
 It was interesting to find that the `WebUI.waitForElementNotPresent` keyword did not throw SERE. I checked its Groovy source code and found it is implemented nicely so that it prevents SERE.
+
+### Stateful keywords, Stateless keywords
+
+I would like to propose a set of categorical terms:
+
+-   **Stateless keyword**, e.g, `WebUI.waitForElementNotPresent`
+
+-   **Stateful keyword**, e.g, `WebUI.waitForElementNotClickable`
+
+A stateful keyword has a variable of type `org.openqa.selenium.WebElement`, which is once gets initialized with a valid reference to a DOM element
+in the target page, and is kept in memory to be referred to repeatedly for long seconds. The variable is unreliable. When the DOM is changed by
+JavaScript in the target page, the variable becomes stale.
+
+So, how many **stateful keywords** are there in Katalon Studio? --- Well, I don’t know.
+
+I hope that Katalon to publish the list of **stateful keywords** A.S.A.P. so that the users can refrain from those risky keywords.
 
 ### Test Cases/TC3
 
