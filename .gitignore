@@ -14,3 +14,7 @@ build
 .classpath
 
 .project
+
+.cache
+
+Profiles/myMicrosoftAccount.glbl

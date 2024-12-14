@@ -160,7 +160,7 @@ See the source of
         WebUI.comment(">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<")
     }
 
-    WebUI.closeBrowser()
+    //WebUI.closeBrowser()
 
 The TC1 does the following steps:
 
@@ -242,8 +242,8 @@ See the source of [Test Cases/TC2](https://github.com/kazurayam/StaleElementRefe
         // the old <button id='myButton'> was removed, but soon
         // a new <button id='myButton'> was recreated.
         // The keyword will see the HTML node stays clickable untile the timeout expires
-      // However, the keyword throws a SERE for some reason.
-      // Do you know why?
+        // However, the keyword throws a SERE for some reason.
+       // Do you know why?
         WebUI.waitForElementNotClickable(myButtonTestObject,
                                     10,
                                     FailureHandling.STOP_ON_FAILURE)
@@ -482,7 +482,7 @@ You can see there is no output from the statement
 
 This implies that no exception was thrown out of a keyword call because `FailureHandling.CONTINUE_ON_FAILURE` was specified.
 
-### Test Cases/TC4, the final resolution
+### Test Cases/TC4, custom resolution
 
 The TC2 demonstrates that the `WebUI.waitForElementNotClickable` keyword occasionally throws a StaleElementReferenceException.
 
@@ -548,6 +548,19 @@ This code does not throw any SERE.
 In the built-in keyword, the `foundElement` variable is created once outside the scope of `wait` loop and refered to many times inside the `wait` loop. The reference to the `<button id='myButton'>` element has enough chance to get stale.
 
 On the other hand, in my class, the `foundElement` variable is scoped narrow; it resides inside the `apply` method. The `foundElement` variable is created once, refered to only once, then immediately thrown away. The reference to the `<button id='myButton'>` has no chance to get stale.
+
+### TC6 WebUI.waitForElementClickable keyword could throw a StaleElementReferenceException
+
+The TC2 showed me there are some problematic keywords with name starting with "WebUI.waitForElementNot". But how about the keywords of "WebUI.waitForElement\*" ? No one throws a SERE? I examined some and found that "WebUI.waitForElementClickable" keyword could throw a SERE.
+
+I made a Test Case:
+- [`Test Cases/TC6_waitForElementClickable`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC6_waitForElementClickable/Script1734178388903.groovy)
+
+This script targets the url
+
+-   <https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/initiallyDisabledLaterEnabled.html>
+
+When I ran the TC6, I saw a SERE was thrown:
 
 ### Microsoft Azure DevOps log-in process --- a dangerous zone
 

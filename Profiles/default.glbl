@@ -4,19 +4,4 @@
    <name>default</name>
    <tag></tag>
    <defaultProfile>true</defaultProfile>
-   <GlobalVariableEntity>
-      <description></description>
-      <initValue>'kazurakiurayama'</initValue>
-      <name>ACCOUNT</name>
-   </GlobalVariableEntity>
-   <GlobalVariableEntity>
-      <description></description>
-      <initValue>'kazuaki.urayama@gmail.com'</initValue>
-      <name>EMAIL</name>
-   </GlobalVariableEntity>
-   <GlobalVariableEntity>
-      <description></description>
-      <initValue>'Sq682myE'</initValue>
-      <name>PASSWD</name>
-   </GlobalVariableEntity>
 </GlobalVariableEntities>
