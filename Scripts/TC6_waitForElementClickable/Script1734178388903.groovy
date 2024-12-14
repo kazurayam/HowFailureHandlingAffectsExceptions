@@ -11,12 +11,22 @@ import com.kms.katalon.core.testobject.TestObject
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 /**
- * TC5
+ * TC6_waitForElementClickable
  *
- * A variation derived from the TC2.
- * This script list the WebUI keywords that takes a timeout second as argument to check
- * if these raises Selenium StaleElementPresentException.
- *
+ * This script demonstrates that the WebUI.waitForElementClickable keyword may throw
+ * a StaleElementReferenceException when the target web page is a web form.
+ * 
+ * The "form.html" works as follows:
+ * 
+ * 1. It has a <button id="myButton"> which is initially "disabled"; so that is not clickable
+ * 2. At 3 seconds after the page load, the button element is removed; and recreated.
+ * 3. The recreated <button id="myButton"> is enabled; so that it is clickable.
+ * 
+ * The WebUI.waitForElementClickable keyword checks the state of the `<button id="myButton">`.
+ * Initially, the keyword finds the button is not clickable.
+ * The keyword waits for the button to be clikable.
+ * At 3 secs when the <button id="myButton"> is removed and recreated, the keyword throws a SERE.
+ * 
  * @author kazurayam
  */
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
@@ -44,7 +54,6 @@ try {
 	println "==========================================================================="
 	e.printStackTrace()
 	println "==========================================================================="
-
 }
 
 WebUI.closeBrowser()

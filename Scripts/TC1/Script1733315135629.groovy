@@ -57,4 +57,4 @@ try {
 	WebUI.comment(">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<")
 }
 
-WebUI.closeBrowser()
+//WebUI.closeBrowser()

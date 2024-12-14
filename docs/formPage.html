@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reproducing Selenium StaleElementReferenceException</title>
+  <style>
+body { background-color: cornsilk; }
+#main {
+  width: 680px;
+}
+button {
+  border: none;
+  border-style: solid; background-color: #e7e7e7; border-color: #ccc;
+  padding: 15px 32px;
+  color: #999;
+  text-align: center; text-decoration: none; display: inline-block;
+  font-size: 16px; border-radius: 25px;
+}
+button.recreated {
+  border:none;
+  background-color: #008CBA; /* Blue */
+  color: #ffffff;
+}
+div#btn-container {
+  margin-top: 100px;
+}
+  </style>
+</head>
+<body>
+  <h3>Reproducing Selenium StaleElementReferenceException</h3>
+  <div id="main">
+    <form id="myForm">
+      <div id="field-container">
+        <label for="email">email:</label><input id="email" name="email" type="text" size="40">
+      </div>
+      <div id="btn-container">
+        <button id="myButton">CONTINUE (disabled)</button>
+        <p id="note">The button is initially disabled; it is unabled to click.
+          At 3 seconds after page loading, the button will be once removed and recreated to be enabled;
+          it becomes clickable</p>
+      </div>
+    </form>
+  </div>
+
+  <script type="text/javascript">
+    function modifyPage() {
+      // type a text into the email field
+      document.getElementById('email').value = 'sombody.to.love@queen.com'
+      // remove the <button @id='myButton'>
+      document.getElementById('myButton').remove();
+      document.getElementById('note').remove();
+      // recreate the <button @id='byButton'>
+      let btn = document.createElement('button');
+      btn.id = 'myButton';
+      btn.textContent = 'CONTINUE (enabled)'
+      btn.classList = ['recreated'];
+      btn.disabled = false;
+      document.getElementById('btn-container').append(btn);
+      console.log('modified the page')
+    }
+    // will modify the page at 3 seconds after the initial loading
+    window.addEventListener("load", (event) => {
+      document.getElementById('myButton').disabled = true;
+      console.log('the page was loaded initially');
+      const timeout = window.setTimeout(modifyPage, 3000);
+      console.log('timeout was set');
+    });
+    window.addEventListener("click", (event) => {
+      console.log(event.name + " was clicked");
+    });
+  </script>
+</body>
+</html>

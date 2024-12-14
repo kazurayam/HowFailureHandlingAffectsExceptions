@@ -39,8 +39,8 @@ try {
 	// the old <button id='myButton'> was removed, but soon
 	// a new <button id='myButton'> was recreated.
 	// The keyword will see the HTML node stays clickable untile the timeout expires
-  // However, the keyword throws a SERE for some reason.
-  // Do you know why?
+    // However, the keyword throws a SERE for some reason.
+   // Do you know why?
 	WebUI.waitForElementNotClickable(myButtonTestObject,
 		                        10,
 								FailureHandling.STOP_ON_FAILURE)
