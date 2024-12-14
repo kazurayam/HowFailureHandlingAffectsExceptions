@@ -22,8 +22,8 @@ button.recreated {
   background-color: #008CBA; /* Blue */
   color: #ffffff;
 }
-div#btn-container {
-  margin-top: 100px;
+#row {
+  padding: 20px 40px 20px 10px;
 }
   </style>
 </head>
@@ -31,29 +31,24 @@ div#btn-container {
   <h3>Reproducing Selenium StaleElementReferenceException</h3>
   <div id="main">
     <form id="myForm">
-      <div id="field-container">
-        <label for="email">email:</label><input id="email" name="email" type="text" size="40">
+      <div class="row" id="btn-container">
+        <button id="myButton">Disabled</button>
       </div>
-      <div id="btn-container">
-        <button id="myButton">CONTINUE (disabled)</button>
-        <p id="note">The button is initially disabled; it is unabled to click.
-          At 3 seconds after page loading, the button will be once removed and recreated to be enabled;
-          it becomes clickable</p>
-      </div>
+      <p id="note">The button is initially disabled; it is unable to click.
+          At 3 seconds after page loading, the button will be once removed and recreated.
+          The new button will be enabled, it will become clickable.</p>
     </form>
   </div>
 
   <script type="text/javascript">
     function modifyPage() {
-      // type a text into the email field
-      document.getElementById('email').value = 'sombody.to.love@queen.com'
       // remove the <button @id='myButton'>
       document.getElementById('myButton').remove();
       document.getElementById('note').remove();
       // recreate the <button @id='byButton'>
       let btn = document.createElement('button');
       btn.id = 'myButton';
-      btn.textContent = 'CONTINUE (enabled)'
+      btn.textContent = 'Enabled'
       btn.classList = ['recreated'];
       btn.disabled = false;
       document.getElementById('btn-container').append(btn);

@@ -16,7 +16,7 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
  * This script demonstrates that the WebUI.waitForElementClickable keyword may throw
  * a StaleElementReferenceException when the target web page is a web form.
  * 
- * The "form.html" works as follows:
+ * The "initiallyDisabledLaterEnabled.html" works as follows:
  * 
  * 1. It has a <button id="myButton"> which is initially "disabled"; so that is not clickable
  * 2. At 3 seconds after the page load, the button element is removed; and recreated.
@@ -31,7 +31,7 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
  */
 Path projectDir = Paths.get(RunConfiguration.getProjectDir())
 
-Path html = projectDir.resolve("docs/formPage.html")
+Path html = projectDir.resolve("docs/initiallyDisabledLaterEnabled.html")
 
 URL htmlURL = html.toFile().toURI().toURL()
 String urlString = htmlURL.toExternalForm()
@@ -48,7 +48,7 @@ TestObject myButtonTestObject = findTestObject("Object Repository/myButton")
 WebUI.verifyElementPresent(myButtonTestObject, 10, FailureHandling.STOP_ON_FAILURE)
 
 try {
-	WebUI.waitForElementClickable(myButtonTestObject, 5, FailureHandling.STOP_ON_FAILURE)                  // => threw SERE
+	WebUI.waitForElementClickable(myButtonTestObject, 5, FailureHandling.STOP_ON_FAILURE)  // => threw SERE
 } catch (Exception e) {
 	println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
 	println "==========================================================================="
