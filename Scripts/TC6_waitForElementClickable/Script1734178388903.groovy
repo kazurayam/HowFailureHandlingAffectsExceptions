@@ -18,14 +18,18 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
  * 
  * The "initiallyDisabledLaterEnabled.html" works as follows:
  * 
- * 1. It has a <button id="myButton"> which is initially "disabled"; so that is not clickable
+ * 1. It has a <input type="button" id="myButton"> which is initially "disabled"; 
+ *    so that is not clickable
  * 2. At 3 seconds after the page load, the button element is removed; and recreated.
- * 3. The recreated <button id="myButton"> is enabled; so that it is clickable.
+ * 3. The recreated <input type="button" id="myButton"> is enabled; 
+ *    so that it is clickable.
  * 
- * The WebUI.waitForElementClickable keyword checks the state of the `<button id="myButton">`.
+ * The WebUI.waitForElementClickable keyword checks the state of the `<input type="button" id="myButton">` element.
  * Initially, the keyword finds the button is not clickable.
- * The keyword waits for the button to be clikable.
- * At 3 secs when the <button id="myButton"> is removed and recreated, the keyword throws a SERE.
+ * The keyword waits for the button to become clickable.
+ * At 3 secs when the <input type="button" id="myButton"> is removed and recreated.
+ * The keyword tries to refer to the element but the reference has become stale;
+ * so the keyword throws a SERE.
  * 
  * @author kazurayam
  */
@@ -41,13 +45,13 @@ WebUI.comment("navigating to " + urlString)
 WebUI.openBrowser('')
 WebUI.navigateToUrl(urlString)
 WebUI.setViewPortSize(800, 600)
-TestObject myButtonTestObject = findTestObject("Object Repository/myButton")
+TestObject tObj = findTestObject("Object Repository/myInputButton")
 
-// make sure <button id='myButton'> is displayed in the page initially
-WebUI.verifyElementPresent(myButtonTestObject, 10, FailureHandling.STOP_ON_FAILURE)
+// make sure <input type="button" id='myButton'> is displayed in the page initially
+WebUI.verifyElementPresent(tObj, 10, FailureHandling.STOP_ON_FAILURE)
 
 try {
-	WebUI.waitForElementClickable(myButtonTestObject, 5, FailureHandling.STOP_ON_FAILURE)  // => threw SERE
+	WebUI.waitForElementClickable(tObj, 5, FailureHandling.STOP_ON_FAILURE)  // => threw SERE
 } catch (Exception e) {
 	println ">>> An Exception was caught: " + e.getClass().getName() + ": " + e.getMessage() + " <<<"
 	println "==========================================================================="

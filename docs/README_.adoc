@@ -401,7 +401,9 @@ Why the `waitForElementClickable` keyword threw a StaleElementReferenceException
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/TC6_html.png[]
 
-The `disabled` attribute makes the element unable to click. Therefore the `WebUI.waitForElementClickable` keyword is forced to wait for a while. Then at 3 secs after the initial page loading, JavaScript removes the element and recreate a new `<button id="myButton">` with no `disabled` attribute. As soon as the button element is recreated, the `WebUI.waitForElementClickable` keyword tries to access to the WebElement object, which has got already stale. 
+The `disabled` attribute makes the element unable to click. Therefore the `WebUI.waitForElementClickable` keyword is forced to wait for a while. Then at 3 secs after the initial page loading, JavaScript removes the element and recreate a new `<button id="myButton">` with no `disabled` attribute. As soon as the button element is recreated, the `WebUI.waitForElementClickable` keyword tries to access to the WebElement object, which has got already stale.
+
+The `WebUI.waitForElementClickable` is a stateful keyword. There could be more.
 
 == Conclusion
 

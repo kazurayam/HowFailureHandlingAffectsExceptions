@@ -9,7 +9,7 @@ body { background-color: cornsilk; }
 #main {
   width: 680px;
 }
-button {
+input {
   border: none;
   border-style: solid; background-color: #e7e7e7; border-color: #ccc;
   padding: 15px 32px;
@@ -17,7 +17,7 @@ button {
   text-align: center; text-decoration: none; display: inline-block;
   font-size: 16px; border-radius: 25px;
 }
-button.recreated {
+input.recreated {
   border:none;
   background-color: #008CBA; /* Blue */
   color: #ffffff;
@@ -32,7 +32,7 @@ button.recreated {
   <div id="main">
     <form id="myForm">
       <div class="row" id="btn-container">
-        <button id="myButton">Disabled</button>
+        <input type="button" id="myButton" value="Disabled">
       </div>
       <p id="note">The button is initially disabled; it is unable to click.
           At 3 seconds after page loading, the button will be once removed and recreated.
@@ -46,13 +46,17 @@ button.recreated {
       document.getElementById('myButton').remove();
       document.getElementById('note').remove();
       // recreate the <button @id='byButton'>
-      let btn = document.createElement('button');
+      let btn = document.createElement('input');
+      btn.type = 'button';
       btn.id = 'myButton';
-      btn.textContent = 'Enabled'
+      btn.value = 'Enabled'
       btn.classList = ['recreated'];
       btn.disabled = false;
       document.getElementById('btn-container').append(btn);
       console.log('modified the page')
+      document.querySelector('#myButton').addEventListener("click", function(e) {
+        console.log("#myButton was clicked");
+      });
     }
     // will modify the page at 3 seconds after the initial loading
     window.addEventListener("load", (event) => {
@@ -60,9 +64,6 @@ button.recreated {
       console.log('the page was loaded initially');
       const timeout = window.setTimeout(modifyPage, 3000);
       console.log('timeout was set');
-    });
-    window.addEventListener("click", (event) => {
-      console.log(event.name + " was clicked");
     });
   </script>
 </body>
