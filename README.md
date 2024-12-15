@@ -562,21 +562,17 @@ This script targets the url
 
 When I ran the TC6, I saw a SERE was thrown:
 
-### Microsoft Azure DevOps log-in process --- a dangerous zone
-
-There are many posts in the Katalon user forum where people experienced SERE while they tried to automate the login process of Microsoft Azure DevOps.
-
 <figure>
-<img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MS_Azure_sign_in_page.png" alt="MS Azure sign in page" />
+<img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/TC6.png" alt="TC6" />
 </figure>
 
-I tried to "fix SERE" at the MS Azure login page, but I failed. See [my previous post](https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973/103).
+Why the `waitForElementClickable` keyword threw a StaleElementReferenceException? There is a pitfall in the target HTML. The HTML initially has a `<button id="myButton" disabled>`.
 
-The log-in pages of Microsoft Azure are highly JavaScript-driven. I would warn you, it’s terribly difficult to automate. You would get SERE there due to the way how the target page is implemented. Don’t blame Katalon Studio for the difficulty.
+<figure>
+<img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/TC6_html.png" alt="TC6 html" />
+</figure>
 
-### Other tools?
-
-The StaleElementReferenceException keeps up with any Selenium WebDriver-based browser-automation tools including Katlaon Studio. On the other hand, there are new browser-automation tools based on the CDP/BiDi technology. For example, [Playwright](https://playwright.dev/). I guess that those new comers work better for the Azure DevOps log-in process. I hope someone to try it and report their experiences back here.
+The `disabled` attribute makes the element unable to click. Therefore the `WebUI.waitForElementClickable` keyword is forced to wait for a while. Then at 3 secs after the initial page loading, JavaScript removes the element and recreate a new `<button id="myButton">` with no `disabled` attribute. As soon as the button element is recreated, the `WebUI.waitForElementClickable` keyword tries to access to the WebElement object, which has got already stale.
 
 ## Conclusion
 
