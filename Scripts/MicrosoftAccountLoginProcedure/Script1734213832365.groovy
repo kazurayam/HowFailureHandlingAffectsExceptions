@@ -40,8 +40,6 @@ TestObject loginfmt = makeTestObject("loginfmtText", "//input[@name='loginfmt']"
 WebUI.waitForElementClickable(loginfmt, 8)
 WebUI.sendKeys(loginfmt, GlobalVariable.EMAIL)
 
-WebUI.delay(1)
-
 TestObject nextButton = makeTestObject("NextButton", "//input[@id='idSIButton9']")
 WebUI.waitForElementClickable(nextButton, 8)
 WebUI.click(nextButton)
@@ -50,14 +48,13 @@ TestObject passwd = makeTestObject("PasswdText", "//input[@name='passwd']")
 WebUI.waitForElementClickable(passwd, 8)
 
 WebUI.sendKeys(passwd, GlobalVariable.PASSWD)
-WebUI.delay(1)
 
-TestObject signinButton = makeTestObject("SigninButton", "//input[@id='idSIButton9']")
+TestObject signinButton = makeTestObject("SigninButton", "//button[@id='idSIButton9']")
 WebUI.waitForElementClickable(signinButton, 8)
 WebUI.click(signinButton)
 
-TestObject yesButton = makeTestObject("YesButton", "//input[@id='idSIButton9']")
-WebUI.waitForElementClickable(signinButton, 8)
-WebUI.click(signinButton)
+TestObject yesButton = makeTestObject("YesButton", "//button[@id='acceptButton']")
+WebUI.waitForElementClickable(yesButton, 8)
+WebUI.click(yesButton)
 
 WebUI.closeBrowser()
