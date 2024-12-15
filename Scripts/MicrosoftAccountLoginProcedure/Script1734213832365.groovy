@@ -22,14 +22,16 @@ WebUI.navigateToUrl(url)
 
 TestObject loginfmt = makeTestObject("loginfmtText", "//input[@name='loginfmt']")
 WebUI.waitForElementClickable(loginfmt, 8)
+WebUI.click(loginfmt)
 WebUI.sendKeys(loginfmt, GlobalVariable.EMAIL)
 
 TestObject nextButton = makeTestObject("NextButton", "//input[@id='idSIButton9']")
 WebUI.waitForElementClickable(nextButton, 8)
 WebUI.click(nextButton)
 
-TestObject passwd = makeTestObject("PasswdText", "//input[@name='passwd']")
+TestObject passwd = makeTestObject("Passwd", "//input[@name='passwd']")
 WebUI.waitForElementClickable(passwd, 8)
+WebUI.click(passwd)    //=>  throws a StaleElementReferenceException
 WebUI.sendKeys(passwd, GlobalVariable.PASSWD)
 
 TestObject signinButton = makeTestObject("SigninButton", "//button[@id='idSIButton9']")
@@ -37,7 +39,7 @@ WebUI.waitForElementClickable(signinButton, 8)
 WebUI.click(signinButton)
 
 TestObject yesButton = makeTestObject("YesButton", "//button[@id='acceptButton']")
-WebUI.waitForElementClickable(yesButton, 8)
+WebUI.waitForElementClickable(yesButton, 20)
 WebUI.click(yesButton)
 
 WebUI.closeBrowser()
