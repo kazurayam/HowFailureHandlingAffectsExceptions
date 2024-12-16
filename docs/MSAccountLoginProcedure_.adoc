@@ -1,4 +1,4 @@
-= Microsoft Account Login Procedure makes Katalon WebUI.click keyword to throw StaleElementReferenceException
+= Microsoft Account Login Procedure tricks Katalon WebUI.click keyword to throw StaleElementReferenceException
 
 - @author kazurayam
 - @date Dec 2024
@@ -33,7 +33,7 @@ Here I assume you have already have a Microsoft Account for you. You want to cre
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/myMicrosoftAccount.png[]
 
-I made a script https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_failing/Script1734339841468.groovy[Test Case/MSAccountLogin_failing]
+I made a Test Case script https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_failing/Script1734339841468.groovy[Test Case/MSAccountLogin_failing], which was derived from the script by jirayu.s.
 
 [source,groovy]
 ----
@@ -58,7 +58,7 @@ Of course, I expect the value of `GlobalVariable.PASSWD` is sent into the `<inpu
 
 However, the script throws an StaleElementReferenceException and stops. You can have a look at a sample output in the console:
 
-- https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/MSAccountLoginProcedure_console.txt[console output]
+- https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/MsAccountLoginProcedure_console.txt[console output]
 
 Please read this log. You can find that a `StaleElementReferenceException` was thrown by the line #38:
 
