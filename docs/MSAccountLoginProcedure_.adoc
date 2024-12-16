@@ -25,7 +25,7 @@ However, at that time of investigation, I could not reproduce a case where `WebU
 
 Now, I went back to the jirayu's topic. I had a careful look into the Microsoft Account Login procedure. Now I believe I have found out a definitive resolution to his problem. Let me explain it.
 
-== Test Cases/MSAccountLogin_failing
+== Test Cases/MSAccountLogin_failing --- reproducing the original issue
 
 Let me demonstrate a Test Case that can reproduce the jirayu.s' problem.
 
@@ -42,202 +42,31 @@ include::../Scripts/MSAccountLogin_failing/Script1734339841468.groovy[]
 
 Please try running this script with the `myMicrosoftAccout` Profile applied.
 
-A browser window will open a URL
+The script opens a browser window, navigate to a URL
 
 - https://dev.azure.com/${GlobalVariable.ACCOUNT}
 
-the browser windown will navigate to a view with a title "Sign in". I will call this view as "the Sign-in view" for short.
+As you well know, this is the entry point for Microsoft Azure DevOps. Browser will show a view with a title "Sign in". I will call this view as "the Sign-in view" for short.
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_1_Signin.png[]
 
-
-The script will send the value of `GlobalVariable.EMAIL` into the `<input @name='loginfmt'>` element, which will be accepted. The script will click the Next button.
-
-The browser window will transition to the view with a title "Enter password". I will call this view "the Enter-password view" for short.
+The test case script will send the value of `GlobalVariable.EMAIL` into the `<input @name='loginfmt'>` element, which will be accepted. The script will click the Next button. The browser window will transition to the view with a title "Enter password". I will call this view as "the Enter-password view" for short.
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_2_Password_SERE.png[]
 
-Of course, I would expect the value of `GlobalVariable.PASSWD` is sent into the `<input name='passwd'>` element.
+Of course, I expect the value of `GlobalVariable.PASSWD` is sent into the `<input name='passwd'>` element.
 
-However, the script will throws an Exception and stop. The floowing shows a sample log output:
+However, the script throws an StaleElementReferenceException and stops. You can have a look at a sample output in the console:
 
-[source,text]
-----
-2024-12-16 18:28:57.929 INFO  c.k.katalon.core.main.TestCaseExecutor   - --------------------
-2024-12-16 18:28:57.934 INFO  c.k.katalon.core.main.TestCaseExecutor   - START Test Cases/MSAccountLogin_failing
-2024-12-16 18:28:58.931 DEBUG testcase.MSAccountLogin_failing          - 1: assert ACCOUNT != null : "need to apply Profile/myMicrosoftAcount"
-2024-12-16 18:28:59.076 DEBUG testcase.MSAccountLogin_failing          - 2: url = https://dev.azure.com/$GlobalVariable.ACCOUNT
-2024-12-16 18:28:59.135 DEBUG testcase.MSAccountLogin_failing          - 3: openBrowser("")
-2024-12-16 18:28:59.599 INFO  c.k.k.core.webui.driver.DriverFactory    - Starting 'Chrome' driver
-Dec 16, 2024 6:28:59 PM org.openqa.selenium.remote.DesiredCapabilities chrome
-INFO: Using `new ChromeOptions()` is preferred to `DesiredCapabilities.chrome()`
-2024-12-16 18:28:59.636 INFO  c.k.k.c.w.util.WebDriverPropertyUtil     - User set preference: ['excludeSwitches', '[enable-automation]']
-2024-12-16 18:28:59.683 INFO  c.k.k.core.webui.driver.DriverFactory    - Action delay is set to 0 milliseconds
-Starting ChromeDriver 131.0.6778.108 (3b014839fbc4fb688b2f5af512d6ce312ad208b1-refs/branch-heads/6778@{#2393}) on port 16353
-Only local connections are allowed.
-Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
-ChromeDriver was started successfully on port 16353.
-Dec 16, 2024 6:29:04 PM org.openqa.selenium.remote.ProtocolHandshake createSession
-INFO: Detected dialect: W3C
-2024-12-16 18:29:04.889 INFO  c.k.k.core.webui.driver.DriverFactory    - sessionId = baa0aefa0f817b12957e332db4a59cc7
-2024-12-16 18:29:04.936 INFO  c.k.k.core.webui.driver.DriverFactory    - browser = Chrome 131.0.0.0
-2024-12-16 18:29:04.955 INFO  c.k.k.core.webui.driver.DriverFactory    - platform = Mac OS X
-2024-12-16 18:29:04.991 INFO  c.k.k.core.webui.driver.DriverFactory    - seleniumVersion = 3.141.59
-2024-12-16 18:29:05.019 INFO  c.k.k.core.webui.driver.DriverFactory    - proxyInformation = ProxyInformation { proxyOption=NO_PROXY, proxyServerType=HTTP, username=, password=********, proxyServerAddress=, proxyServerPort=0, executionList="", isApplyToDesiredCapabilities=true }
-2024-12-16 18:29:05.084 DEBUG testcase.MSAccountLogin_failing          - 4: setViewPortSize(680, 800)
-2024-12-16 18:29:05.247 DEBUG testcase.MSAccountLogin_failing          - 5: navigateToUrl(url)
-2024-12-16 18:29:09.035 DEBUG testcase.MSAccountLogin_failing          - 6: loginfmt = makeTestObject("loginfmtText", "//input[@name='loginfmt']")
-2024-12-16 18:29:09.069 DEBUG testcase.MSAccountLogin_failing          - 1: tObj = new com.kms.katalon.core.testobject.TestObject(id)
-2024-12-16 18:29:09.095 DEBUG testcase.MSAccountLogin_failing          - 2: tObj.addProperty("xpath", EQUALS, xpathExpression)
-2024-12-16 18:29:09.116 DEBUG testcase.MSAccountLogin_failing          - 3: return tObj
-2024-12-16 18:29:09.122 DEBUG testcase.MSAccountLogin_failing          - 7: waitForElementClickable(loginfmt, 8)
-2024-12-16 18:29:10.992 DEBUG testcase.MSAccountLogin_failing          - 8: click(loginfmt)
-2024-12-16 18:29:11.283 DEBUG testcase.MSAccountLogin_failing          - 9: sendKeys(loginfmt, EMAIL)
-2024-12-16 18:29:11.855 DEBUG testcase.MSAccountLogin_failing          - 10: nextButton = makeTestObject("NextButton", "//input[@id='idSIButton9']")
-2024-12-16 18:29:11.860 DEBUG testcase.MSAccountLogin_failing          - 1: tObj = new com.kms.katalon.core.testobject.TestObject(id)
-2024-12-16 18:29:11.866 DEBUG testcase.MSAccountLogin_failing          - 2: tObj.addProperty("xpath", EQUALS, xpathExpression)
-2024-12-16 18:29:11.868 DEBUG testcase.MSAccountLogin_failing          - 3: return tObj
-2024-12-16 18:29:11.872 DEBUG testcase.MSAccountLogin_failing          - 11: waitForElementClickable(nextButton, 8)
-2024-12-16 18:29:11.929 DEBUG testcase.MSAccountLogin_failing          - 12: click(nextButton)
-2024-12-16 18:29:12.070 DEBUG testcase.MSAccountLogin_failing          - 13: passwd = makeTestObject("Passwd", "//input[@name='passwd']")
-2024-12-16 18:29:12.073 DEBUG testcase.MSAccountLogin_failing          - 1: tObj = new com.kms.katalon.core.testobject.TestObject(id)
-2024-12-16 18:29:12.075 DEBUG testcase.MSAccountLogin_failing          - 2: tObj.addProperty("xpath", EQUALS, xpathExpression)
-2024-12-16 18:29:12.079 DEBUG testcase.MSAccountLogin_failing          - 3: return tObj
-2024-12-16 18:29:12.083 DEBUG testcase.MSAccountLogin_failing          - 14: waitForElementClickable(passwd, 8)
-2024-12-16 18:29:12.145 DEBUG testcase.MSAccountLogin_failing          - 15: click(passwd)
-2024-12-16 18:29:15.396 ERROR c.k.k.core.keyword.internal.KeywordMain  - ❌ Unable to click on object 'Passwd' (Root cause: com.kms.katalon.core.exception.StepFailedException: Unable to click on object 'Passwd'
-	at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain.stepFailed(WebUIKeywordMain.groovy:64)
-	at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain.runKeyword(WebUIKeywordMain.groovy:26)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.click(ClickKeyword.groovy:74)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.execute(ClickKeyword.groovy:40)
-	at com.kms.katalon.core.keyword.internal.KeywordExecutor.executeKeywordForPlatform(KeywordExecutor.groovy:74)
-	at com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords.click(WebUiBuiltInKeywords.groovy:620)
-	at MSAccountLogin_failing.run(MSAccountLogin_failing:38)
-	at com.kms.katalon.core.main.ScriptEngine.run(ScriptEngine.java:194)
-	at com.kms.katalon.core.main.ScriptEngine.runScriptAsRawText(ScriptEngine.java:119)
-	at com.kms.katalon.core.main.TestCaseExecutor.runScript(TestCaseExecutor.java:448)
-	at com.kms.katalon.core.main.TestCaseExecutor.doExecute(TestCaseExecutor.java:439)
-	at com.kms.katalon.core.main.TestCaseExecutor.processExecutionPhase(TestCaseExecutor.java:418)
-	at com.kms.katalon.core.main.TestCaseExecutor.accessMainPhase(TestCaseExecutor.java:410)
-	at com.kms.katalon.core.main.TestCaseExecutor.execute(TestCaseExecutor.java:285)
-	at com.kms.katalon.core.main.TestCaseMain.runTestCase(TestCaseMain.java:144)
-	at com.kms.katalon.core.main.TestCaseMain.runTestCase(TestCaseMain.java:135)
-	at TempTestCase1734341331810.run(TempTestCase1734341331810.groovy:25)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-Caused by: org.openqa.selenium.StaleElementReferenceException: stale element reference: stale element not found
-  (Session info: chrome=131.0.6778.140)
-For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/stale_element_reference.html
-Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:25:53'
-System info: host: 'KAZUAKInoMacBook-Air-2.local', ip: 'fe80:0:0:0:e:c87f:b3d0:28d4%en0', os.name: 'Mac OS X', os.arch: 'x86_64', os.version: '14.7.1', java.version: '17.0.7'
-Driver info: com.kms.katalon.selenium.driver.CChromeDriver
-Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 131.0.6778.140, chrome: {chromedriverVersion: 131.0.6778.108 (3b014839fbc..., userDataDir: /var/folders/7m/lm7d6nx51kj...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:50621}, javascriptEnabled: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: MAC, platformName: MAC, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
-Session ID: baa0aefa0f817b12957e332db4a59cc7
-	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.createException(W3CHttpResponseCodec.java:187)
-	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:122)
-	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:49)
-	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
-	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)
-	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:552)
-	at com.kms.katalon.selenium.driver.CChromeDriver.execute(CChromeDriver.java:19)
-	at org.openqa.selenium.remote.RemoteWebElement.execute(RemoteWebElement.java:285)
-	at org.openqa.selenium.remote.RemoteWebElement.click(RemoteWebElement.java:84)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at org.openqa.selenium.support.events.EventFiringWebDriver$EventFiringWebElement.lambda$new$0(EventFiringWebDriver.java:404)
-	at jdk.proxy2/jdk.proxy2.$Proxy24.click(Unknown Source)
-	at org.openqa.selenium.support.events.EventFiringWebDriver$EventFiringWebElement.click(EventFiringWebDriver.java:417)
-	at org.openqa.selenium.WebElement$click$0.call(Unknown Source)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.clickUntilSuccessWithTimeout(ClickKeyword.groovy:81)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.clickUntilSuccessWithTimeout(ClickKeyword.groovy)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword$_click_closure1.doCall(ClickKeyword.groovy:67)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword$_click_closure1.call(ClickKeyword.groovy)
-	at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain.runKeyword(WebUIKeywordMain.groovy:20)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.click(ClickKeyword.groovy:74)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.execute(ClickKeyword.groovy:40)
-	at com.kms.katalon.core.keyword.internal.KeywordExecutor.executeKeywordForPlatform(KeywordExecutor.groovy:74)
-	at com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords.click(WebUiBuiltInKeywords.groovy:620)
-	at Script1734339841468.run(Script1734339841468.groovy:38)
-	... 13 more
-)
-2024-12-16 18:29:15.404 ERROR c.k.katalon.core.main.TestCaseExecutor   - ❌ Test Cases/MSAccountLogin_failing FAILED.
-Reason:
-com.kms.katalon.core.exception.StepFailedException: Unable to click on object 'Passwd'
-	at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain.stepFailed(WebUIKeywordMain.groovy:64)
-	at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain.runKeyword(WebUIKeywordMain.groovy:26)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.click(ClickKeyword.groovy:74)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.execute(ClickKeyword.groovy:40)
-	at com.kms.katalon.core.keyword.internal.KeywordExecutor.executeKeywordForPlatform(KeywordExecutor.groovy:74)
-	at com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords.click(WebUiBuiltInKeywords.groovy:620)
-	at MSAccountLogin_failing.run(MSAccountLogin_failing:38)
-	at com.kms.katalon.core.main.ScriptEngine.run(ScriptEngine.java:194)
-	at com.kms.katalon.core.main.ScriptEngine.runScriptAsRawText(ScriptEngine.java:119)
-	at com.kms.katalon.core.main.TestCaseExecutor.runScript(TestCaseExecutor.java:448)
-	at com.kms.katalon.core.main.TestCaseExecutor.doExecute(TestCaseExecutor.java:439)
-	at com.kms.katalon.core.main.TestCaseExecutor.processExecutionPhase(TestCaseExecutor.java:418)
-	at com.kms.katalon.core.main.TestCaseExecutor.accessMainPhase(TestCaseExecutor.java:410)
-	at com.kms.katalon.core.main.TestCaseExecutor.execute(TestCaseExecutor.java:285)
-	at com.kms.katalon.core.main.TestCaseMain.runTestCase(TestCaseMain.java:144)
-	at com.kms.katalon.core.main.TestCaseMain.runTestCase(TestCaseMain.java:135)
-	at TempTestCase1734341331810.run(TempTestCase1734341331810.groovy:25)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-Caused by: org.openqa.selenium.StaleElementReferenceException: stale element reference: stale element not found
-  (Session info: chrome=131.0.6778.140)
-For documentation on this error, please visit: https://www.seleniumhq.org/exceptions/stale_element_reference.html
-Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:25:53'
-System info: host: 'KAZUAKInoMacBook-Air-2.local', ip: 'fe80:0:0:0:e:c87f:b3d0:28d4%en0', os.name: 'Mac OS X', os.arch: 'x86_64', os.version: '14.7.1', java.version: '17.0.7'
-Driver info: com.kms.katalon.selenium.driver.CChromeDriver
-Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 131.0.6778.140, chrome: {chromedriverVersion: 131.0.6778.108 (3b014839fbc..., userDataDir: /var/folders/7m/lm7d6nx51kj...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:50621}, javascriptEnabled: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: MAC, platformName: MAC, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
-Session ID: baa0aefa0f817b12957e332db4a59cc7
-	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.createException(W3CHttpResponseCodec.java:187)
-	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:122)
-	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:49)
-	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
-	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)
-	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:552)
-	at com.kms.katalon.selenium.driver.CChromeDriver.execute(CChromeDriver.java:19)
-	at org.openqa.selenium.remote.RemoteWebElement.execute(RemoteWebElement.java:285)
-	at org.openqa.selenium.remote.RemoteWebElement.click(RemoteWebElement.java:84)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at org.openqa.selenium.support.events.EventFiringWebDriver$EventFiringWebElement.lambda$new$0(EventFiringWebDriver.java:404)
-	at jdk.proxy2/jdk.proxy2.$Proxy24.click(Unknown Source)
-	at org.openqa.selenium.support.events.EventFiringWebDriver$EventFiringWebElement.click(EventFiringWebDriver.java:417)
-	at org.openqa.selenium.WebElement$click$0.call(Unknown Source)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.clickUntilSuccessWithTimeout(ClickKeyword.groovy:81)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword.clickUntilSuccessWithTimeout(ClickKeyword.groovy)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword$_click_closure1.doCall(ClickKeyword.groovy:67)
-	at com.kms.katalon.core.webui.keyword.builtin.ClickKeyword$_click_closure1.call(ClickKeyword.groovy)
-	at com.kms.katalon.core.webui.keyword.internal.WebUIKeywordMain.runKeyword(WebUIKeywordMain.groovy:20)
-	... 18 more
+- https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/MSAccountLoginProcedure_console.txt[console output]
 
-2024-12-16 18:29:15.428 INFO  c.k.katalon.core.main.TestCaseExecutor   - END Test Cases/MSAccountLogin_failing
-----
-
-If you read this log carefully, you would see that a `StaleElementReferenceException` was thrown by a call to the line of
+Please read this log. You can find that a `StaleElementReferenceException` was thrown by the line #38:
 
 ```
-WebUI.click(passwd)    //=>  throws a StaleElementReferenceException
+WebUI.click(passwd)
 ```
 
-This is a big surprise for me.
+This was a surprise for me.
 
 == Problem analysis.
 
