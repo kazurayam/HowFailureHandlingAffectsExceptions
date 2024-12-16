@@ -1,3 +1,20 @@
+= Microsoft Account Login Procedure makes Katalon WebUI.click keyword to throw StaleLElementReferenceException
+
+- @author kazurayam
+- @date Dec 2024
+
+== Problem to solve
+
+In the Katalon Community forum, there was a topic
+
+- https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973["Stale element not found, is this relate to using same Object?"]
+
+originated by jirayu.s in Sep 2023. He tried develop a Test Case script in Katalon Studio that automates the login procedure in to Microsoft Account. But encountered a difficulty: **`WebUI.click(testobject)` keyword threw a StaleElementReferenceException**. 13 people (including me, kazurayam) were involved and posted their comment to this topic. But nobody could find the reason jirayu.s's test failed; nobody could tell how to fix the problem in the Microsoft Account Login procedure.
+
+Now, I've studied this problem again. I believe I could find a definitive resolution to it. Let me explain what I have done.
+
+
+
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_1_Signin.png[]
 
