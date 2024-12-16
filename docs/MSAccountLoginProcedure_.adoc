@@ -1,4 +1,4 @@
-= Microsoft Account Login Procedure makes Katalon WebUI.click keyword to throw StaleLElementReferenceException
+= Microsoft Account Login Procedure makes Katalon WebUI.click keyword to throw StaleElementReferenceException
 
 - @author kazurayam
 - @date Dec 2024
@@ -11,7 +11,25 @@ In the Katalon Community forum, there was a topic
 
 originated by jirayu.s in Sep 2023. He tried develop a Test Case script in Katalon Studio that automates the login procedure in to Microsoft Account. But encountered a difficulty: **`WebUI.click(testobject)` keyword threw a StaleElementReferenceException**. 13 people (including me, kazurayam) were involved and posted their comment to this topic. But nobody could find the reason jirayu.s's test failed; nobody could tell how to fix the problem in the Microsoft Account Login procedure.
 
-Now, I've studied this problem again. I believe I could find a definitive resolution to it. Let me explain what I have done.
+On the other hand, in Dec 2024, I made another topic
+
+- https://forum.katalon.com/t/reproducing-selenium-staleelementreferenceexception-in-katalon-studio/157936/[Reproducing Selenium StaleElementReferenceException in Katalon Studio]
+
+in this post, I argumed that some of the Katalon built-in keywords have defects that causes `StaleElementReferenceException`. The problematic keywords include
+
+1. `WebUI.waitForElementNotClickable(testobject, timeout)`
+2. `WebUI.waitForElementNotHasAttribute(testobject, attributeName, timeout)`
+3. `WebUI.waitForElementClickable(testobject, timeout)`
+
+However, I could not reproduce a case where `WebUI.click(testobject)` keyword throws `StaleElementReferenceException`.
+
+Now, I've studied this problem again: **While automating Microsoft Account Login procedure, WebUI.click keyword could throw StaleElementReferenceException occasionally. Why?**
+
+I believe I have found out a definitive resolution to this problem. Let me explain it.
+
+== Microsoft Account Login procedure
+
+Here I assume you have already created a Microsoft Account for you. Here I would use the following values as example for explation:
 
 
 
