@@ -13,7 +13,7 @@ TestObject makeTestObject(String id, String xpathExpression) {
 	return tObj
 }
 
-assert GlobalVariable.ACCOUNT != null, "You need to apply the Profile myMicrosoftAcount"
+assert GlobalVariable.ACCOUNT != null, "need to apply Profile/myMicrosoftAcount"
 
 String url = "https://dev.azure.com/${GlobalVariable.ACCOUNT}"
 WebUI.openBrowser('')
@@ -29,9 +29,7 @@ TestObject nextButton = makeTestObject("NextButton", "//input[@id='idSIButton9']
 WebUI.waitForElementClickable(nextButton, 8)
 WebUI.click(nextButton)
 
-WebUI.delay(3)  // !important
-
-TestObject passwd = makeTestObject("Passwd", "//input[@name='passwd']")
+TestObject passwd = makeTestObject("Passwd", "//input[@name='passwd' and @class='']")
 WebUI.waitForElementClickable(passwd, 8)
 WebUI.click(passwd)    //=>  throws a StaleElementReferenceException
 WebUI.sendKeys(passwd, GlobalVariable.PASSWD)
@@ -44,4 +42,5 @@ TestObject yesButton = makeTestObject("YesButton", "//button[@id='acceptButton']
 WebUI.waitForElementClickable(yesButton, 20)
 WebUI.click(yesButton)
 
+WebUI.delay(30)
 WebUI.closeBrowser()
