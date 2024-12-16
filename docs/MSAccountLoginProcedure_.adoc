@@ -9,23 +9,21 @@ In the Katalon Community forum, there was a topic
 
 - https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973["Stale element not found, is this relate to using same Object?"]
 
-originated by jirayu.s in Sep 2023. He tried develop a Test Case script in Katalon Studio that automates the login procedure in to Microsoft Account. Microsoft 365, Microsoft OneDrive, Azure DevOps --- these services require you to have https://account.microsoft.com/account["Microsoft Account"] for you. Everytime you launch those cloud services, you need to pass the login procedure. It is likely that you want to automate the login procedure.
-
-But he encountered a difficulty: **`WebUI.click(testobject)` keyword threw a StaleElementReferenceException**. 13 people (including me, kazurayam) were involved in the topic and posted their comments. But eventually nobody could find the reason why jirayu.s's test failed; nobody could tell how to fix the problem in automating the Microsoft Account Login procedure.
+originated by jirayu.s in Sep 2023. He wanted to develop a Test Case script in Katalon Studio that automates the login procedure in to Microsoft Account. Microsoft 365, Microsoft OneDrive, Azure DevOps --- these services require you to have a https://account.microsoft.com/account["Microsoft Account"]. Everytime you use those cloud services, you need to pass the login procedure. If you are to create a Web UI test in Katalon Studio against those Microsoft cloud services, you must be able to automate the login procedure. jirayu.s wanted to do it, but encountered a problem:  **`WebUI.click(testobject)` keyword threw a StaleElementReferenceException**. 13 people (including me, kazurayam) were involved in the topic and posted their comments. But eventually nobody could find the reason why jirayu.s's test got a StaleElementReferenceException.
 
 On the other hand, in Dec 2024, I made another topic
 
 - https://forum.katalon.com/t/reproducing-selenium-staleelementreferenceexception-in-katalon-studio/157936/[Reproducing Selenium StaleElementReferenceException in Katalon Studio]
 
-in this post, I argumed that some of the Katalon built-in keywords have defects that causes `StaleElementReferenceException`. The list of problematic keywords includes:
+in this post, I argumed that some of the Katalon built-in keywords have defects that occasionally cause `StaleElementReferenceException`. The list of problematic keywords includes:
 
 1. `WebUI.waitForElementNotClickable(testobject, timeout)`
 2. `WebUI.waitForElementNotHasAttribute(testobject, attributeName, timeout)`
 3. `WebUI.waitForElementClickable(testobject, timeout)`
 
-However, I could not reproduce a case where `WebUI.click(testobject)` keyword throws `StaleElementReferenceException` as jirayu.s reported.
+However, at that time of investigation, I could not reproduce a case where `WebUI.click(testobject)` keyword throws `StaleElementReferenceException` as jirayu.s reported.
 
-Now, I went back to the jirayu's topic. I did an intensive research **While automating the Microsoft Account Login procedure, WebUI.click keyword could throw StaleElementReferenceException. Why? How to fix it?**. Now I believe I have found out a definitive resolution to this issue. Let me explain it.
+Now, I went back to the jirayu's topic. I had a careful look into the Microsoft Account Login procedure. Now I believe I have found out a definitive resolution to his problem. Let me explain it.
 
 == Test Cases/MSAccountLogin_failing
 
