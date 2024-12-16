@@ -1,4 +1,8 @@
 
+image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_1_Signin.png[]
+
+image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_2_Password_SERE.png[]
+
 
 [source,text]
 ----
@@ -169,3 +173,34 @@ Session ID: baa0aefa0f817b12957e332db4a59cc7
 
 2024-12-16 18:29:15.428 INFO  c.k.katalon.core.main.TestCaseExecutor   - END Test Cases/MSAccountLogin_failing
 ----
+
+[source,html]
+----
+...
+    <input id="i0118" data-testid="i0118" name="passwd" placeholder="Password" type="password" maxlength="120" aria-label="Enter the password for kazuaki.urayama@gmail.com" aria-describedby="loginHeader " class="" autocomplete="current-password" value="" style="border-color: rgb(102, 102, 102);">
+...
+----
+
+
+[source,html]
+----
+...
+    <input name="passwd" type="password" id="i0118"
+        data-bind="moveOffScreen, textInput: passwordBrowserPrefill"
+        class="moveOffScreen" tabindex="-1" aria-hidden="true">
+...
+----
+
+[source,css]
+----
+.moveOffScreen {
+    position:fixed; bottom:0; right:0;
+    height:0 !important;
+    width:0 !important;
+    overflow:hidden; opacity:0; filter:alpha(opacity=0)
+}
+----
+
+
+image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_3_Success.png[]
+
