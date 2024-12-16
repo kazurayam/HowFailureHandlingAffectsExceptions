@@ -9,35 +9,59 @@ In the Katalon Community forum, there was a topic
 
 - https://forum.katalon.com/t/stale-element-not-found-is-this-relate-to-using-same-object/97973["Stale element not found, is this relate to using same Object?"]
 
-originated by jirayu.s in Sep 2023. He tried develop a Test Case script in Katalon Studio that automates the login procedure in to Microsoft Account. But encountered a difficulty: **`WebUI.click(testobject)` keyword threw a StaleElementReferenceException**. 13 people (including me, kazurayam) were involved and posted their comment to this topic. But nobody could find the reason jirayu.s's test failed; nobody could tell how to fix the problem in the Microsoft Account Login procedure.
+originated by jirayu.s in Sep 2023. He tried develop a Test Case script in Katalon Studio that automates the login procedure in to Microsoft Account. Microsoft 365, Microsoft OneDrive, Azure DevOps --- these services require you to have https://account.microsoft.com/account["Microsoft Account"] for you. Everytime you launch those cloud services, you need to pass the login procedure. It is likely that you want to automate the login procedure.
+
+But he encountered a difficulty: **`WebUI.click(testobject)` keyword threw a StaleElementReferenceException**. 13 people (including me, kazurayam) were involved in the topic and posted their comments. But eventually nobody could find the reason why jirayu.s's test failed; nobody could tell how to fix the problem in automating the Microsoft Account Login procedure.
 
 On the other hand, in Dec 2024, I made another topic
 
 - https://forum.katalon.com/t/reproducing-selenium-staleelementreferenceexception-in-katalon-studio/157936/[Reproducing Selenium StaleElementReferenceException in Katalon Studio]
 
-in this post, I argumed that some of the Katalon built-in keywords have defects that causes `StaleElementReferenceException`. The problematic keywords include
+in this post, I argumed that some of the Katalon built-in keywords have defects that causes `StaleElementReferenceException`. The list of problematic keywords includes:
 
 1. `WebUI.waitForElementNotClickable(testobject, timeout)`
 2. `WebUI.waitForElementNotHasAttribute(testobject, attributeName, timeout)`
 3. `WebUI.waitForElementClickable(testobject, timeout)`
 
-However, I could not reproduce a case where `WebUI.click(testobject)` keyword throws `StaleElementReferenceException`.
+However, I could not reproduce a case where `WebUI.click(testobject)` keyword throws `StaleElementReferenceException` as jirayu.s reported.
 
-Now, I've studied this problem again: **While automating Microsoft Account Login procedure, WebUI.click keyword could throw StaleElementReferenceException occasionally. Why?**
+Now, I went back to the jirayu's topic. I did an intensive research **While automating the Microsoft Account Login procedure, WebUI.click keyword could throw StaleElementReferenceException. Why? How to fix it?**. Now I believe I have found out a definitive resolution to this issue. Let me explain it.
 
-I believe I have found out a definitive resolution to this problem. Let me explain it.
+== Test Cases/MSAccountLogin_failing
 
-== Microsoft Account Login procedure
+Let me demonstrate a Test Case that can reproduce the jirayu.s' problem.
 
-Here I assume you have already created a Microsoft Account for you. Here I would use the following values as example for explation:
+Here I assume you have already have a Microsoft Account for you. You want to create a Execution Profile "myMicrosoftAccount" which includes 3 GlobalVariables: `ACCOUNT`, `EMAIL` and `PASSWD`.
 
+image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/myMicrosoftAccount.png[]
 
+I made a script https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_failing/Script1734339841468.groovy[Test Case/MSAccountLogin_failing]
 
+[source,groovy]
+----
+include::../Scripts/MSAccountLogin_failing/Script1734339841468.groovy[]
+----
+
+Please try running this script with the `myMicrosoftAccout` Profile applied.
+
+A browser window will open a URL
+
+- https://dev.azure.com/${GlobalVariable.ACCOUNT}
+
+the browser windown will navigate to a view with a title "Sign in". I will call this view as "the Sign-in view" for short.
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_1_Signin.png[]
 
+
+The script will send the value of `GlobalVariable.EMAIL` into the `<input @name='loginfmt'>` element, which will be accepted. The script will click the Next button.
+
+The browser window will transition to the view with a title "Enter password". I will call this view "the Enter-password view" for short.
+
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_2_Password_SERE.png[]
 
+Of course, I would expect the value of `GlobalVariable.PASSWD` is sent into the `<input name='passwd'>` element.
+
+However, the script will throws an Exception and stop. The floowing shows a sample log output:
 
 [source,text]
 ----
@@ -208,6 +232,18 @@ Session ID: baa0aefa0f817b12957e332db4a59cc7
 
 2024-12-16 18:29:15.428 INFO  c.k.katalon.core.main.TestCaseExecutor   - END Test Cases/MSAccountLogin_failing
 ----
+
+If you read this log carefully, you would see that a `StaleElementReferenceException` was thrown by a call to the line of
+
+```
+WebUI.click(passwd)    //=>  throws a StaleElementReferenceException
+```
+
+This is a big surprise for me.
+
+== Problem analysis.
+
+
 
 [source,html]
 ----
