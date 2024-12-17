@@ -1,4 +1,4 @@
-# Microsoft Account Login Procedure tricks Katalon WebUI.click keyword to throw StaleElementReferenceException
+# Microsoft Account Login Procedure tricks Katalon WebUI.click keyword
 
 -   @author kazurayam
 
@@ -133,11 +133,13 @@ Let me dictate this source:
 
 1.  The WebUI.click keyword internally calls a method `clickUntilSuccessWithTimeout(WebElement,long,int)` which contains a `while` loop.
 
-2.  The loop continues untile the timeout expires (30 secs as default) while `webElement.click()` throws `ElementClickInterceptedException`.
+2.  The loop will exit as soon as the call to `webElement.click()` finished without throwing any Exception.
 
-3.  The loop terminates when `webElement.click()` throws an Exception other than `ElementClickInterceptedException`, for example a `StaleElementReferenceException`.
+3.  The loop continues untill the timeout expires (30 secs as default) while `webElement.click()` throws `ElementClickInterceptedException`.
 
-The `WebUI.click` keyword is implemented "stateful". It is not a "stateless" keyword. This was a surprise for me.
+4.  The loop terminates when `webElement.click()` throws an Exception other than `ElementClickInterceptedException`, for example a `StaleElementReferenceException`.
+
+Thus, the `WebUI.click` keyword is implemented "stateful". It is not a "stateless" keyword. This was a surprise for me.
 
 ### The "Sign in" view also contains an invisible "Password" field as well as the "Password" view
 
@@ -149,13 +151,11 @@ I looked into the HTML source of the "Password view" to see how the input elemen
         <input id="i0118" data-testid="i0118" name="passwd" placeholder="Password" type="password" maxlength="120" aria-label="Enter the password for ***********@gmail.com" aria-describedby="loginHeader " class="" autocomplete="current-password" value="" style="border-color: rgb(102, 102, 102);">
     ...
 
-In order to select this input element, in the TC2 script, I used a XPath expression as this:
+In order to select this input element, in the script, I used a XPath expression as this:
 
     //input[@name="passwd"]
 
-I thought this XPath would be good enought, but in fact, it wasn’t …​
-
-I looked into the HTML source of the "Sign-in view" as well. There I found the following fragment:
+I thought this XPath would be good enough. But in fact, it wasn’t …​ Just accidentally, I looked into the HTML source of the "Sign-in view" as well. There I found the following fragment:
 
 #### the Sign-in view
 
@@ -165,7 +165,7 @@ I looked into the HTML source of the "Sign-in view" as well. There I found the f
             class="moveOffScreen" tabindex="-1" aria-hidden="true">
     ...
 
-The "Password" field was there in the "Sign-in view" as well as in the "Password view"!
+The "Password" field was there in the "Sign-in view", not only in the "Password view"!
 
 I noticed the CSS class `moveOffScreen`. I found the `moveOffScreen` class is implemented as follows.
 
@@ -194,7 +194,7 @@ Now I should read the [`MsAccountLogin_Sign_failing`](https://github.com/kazuray
     37 WebUI.waitForElementClickable(passwd, 8)
     38 WebUI.click(passwd)
 
-At the Line#34, the script clicked the Next button. So the view will transition from the "Sign-in view" to the "Password view". But it takes a few seconds.
+At the Line#34, the script clicked the Next button. So the view will start transition from the "Sign-in view" to the "Password view". But it takes a few seconds.
 
 I intended that the Line#37 will be enough to wait for the view transition to finish and make sure that we are on the "Password view".
 
@@ -204,15 +204,15 @@ As I explained above, the `WebUI.click` keyword will drop into a loop while the 
 
 Sooner or later the view will transition from the "Sign-in view" to the "Password view". On the "Password view", yes, there is an HTML element that matches with the XPath `//input[@name='passwd']`. However the HTML node is a newly created one. Therefore a StaleElementRefereceException will be thrown.
 
-## Resolution
+## Solutions
 
 I have found out the internal mechanism how a StateElementReferenceException is thrown by `WebUI.click` keyword against the Microsoft Account Login procedure. Now I can propose a few solutions.
 
 ### A workaround: insert delay before click
 
-How about inserting a few seconds of dumb delay just before calling `WebUI.click` so that my script can wait for the view transition from the "Sign-in view" to the "Password view"?
+How about inserting a few seconds of dumb delay just before calling `WebUI.click` so that my script can wait for the view transition from "Sign-in view" to "Password view" to finish?
 
-I made the [Test Cases/MSAccountLogin\_passing\_with\_delay](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_delay), which contains lines as follows:
+I made the [Test Cases/MSAccountLogin\_passing\_with\_delay](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_delay/Script1734339327912.groovy), which contains lines as follows:
 
     TestObject passwd = makeTestObject("Passwd", "//input[@name='passwd']")
     WebUI.waitForElementClickable(passwd, 8)
@@ -227,11 +227,11 @@ This script passed! I could reach to my Azure DevOps console:
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_3_Success.png" alt="MsAccountLoginProcedure 3 Success" />
 </figure>
 
-===
+### Locator to select the target element specifically
 
-The "Sign-in view" has an input element for "Password", the "Password view" has it as well. But these 2 HTML element are coded sightly different. Escpecially, the `class` attribute can differentiate the 2 HTML elements. It is a good idea to change the XPath expression slightly specific so that it matches the node on the "Password view" only, it does not match the node on the "Sign-in view".
+Both of the "Sign-in view" and the "Password view" have `<input name="passwd">` elements which confused my failing script. But the two elements are coded sightly different. Escpecially, the `class` attribute can differentiate the two. It would be an idea to use an XPath expression more specific so that it matches the `<input>` node on the "Password view" only.
 
-I made the [Test Cases/MSAccountLogin\_passing\_with\_specific\_locator](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_specific_locator.groovy), which contains lines as follows:
+I made the [Test Cases/MSAccountLogin\_passing\_with\_specific\_locator](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_specific_locator/Script1734418319232.groovy), which contains lines as follows:
 
     TestObject passwd = makeTestObject("Passwd", "//input[@name='passwd' and @class='']")  // with more specific locator
     WebUI.waitForElementClickable(passwd, 8)
@@ -241,4 +241,4 @@ This script also succeeded to open the Azure DevOps console.
 
 ## Conclusion
 
-The Microsoft Account Login procedure is a terribly difficult target for Web UI automation, but I could find out a way.
+The Microsoft Account Login procedure is a terribly difficult target for Web UI automation, but I could find out a way to live with it.

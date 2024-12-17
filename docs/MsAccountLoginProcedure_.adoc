@@ -167,15 +167,15 @@ As I explained above, the `WebUI.click` keyword will drop into a loop while the 
 Sooner or later the view will transition from the "Sign-in view" to the "Password view". On the "Password view", yes, there is an HTML element that matches with the XPath `//input[@name='passwd']`. However the HTML node is a newly created one. Therefore a StaleElementRefereceException will be thrown.
 
 
-== Resolution
+== Solutions
 
 I have found out the internal mechanism how a StateElementReferenceException is thrown by `WebUI.click` keyword against the Microsoft Account Login procedure. Now I can propose a few solutions.
 
 === A workaround: insert delay before click
 
-How about inserting a few seconds of dumb delay just before calling `WebUI.click` so that my script can wait for the view transition from the "Sign-in view" to the "Password view"?
+How about inserting a few seconds of dumb delay just before calling `WebUI.click` so that my script can wait for the view transition from "Sign-in view" to "Password view" to finish?
 
-I made the https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_delay[Test Cases/MSAccountLogin_passing_with_delay], which contains lines as follows:
+I made the https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_delay/Script1734339327912.groovy[Test Cases/MSAccountLogin_passing_with_delay], which contains lines as follows:
 
 [source, groovy]
 ----
@@ -191,11 +191,11 @@ This script passed! I could reach to my Azure DevOps console:
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_3_Success.png[]
 
-===
+=== Locator to select the target element specifically
 
-The "Sign-in view" has an input element for "Password", the "Password view" has it as well. But these 2 HTML element are coded sightly different. Escpecially, the `class` attribute can differentiate the 2 HTML elements. It is a good idea to change the XPath expression slightly specific so that it matches the node on the "Password view" only, it does not match the node on the "Sign-in view".
+Both of the "Sign-in view" and the "Password view" have `<input name="passwd">` elements which confused my failing script. But the two elements are coded sightly different. Escpecially, the `class` attribute can differentiate the two. It would be an idea to use an XPath expression more specific so that it matches the `<input>` node on the "Password view" only.
 
-I made the https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_specific_locator.groovy[Test Cases/MSAccountLogin_passing_with_specific_locator], which contains lines as follows:
+I made the https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_specific_locator/Script1734418319232.groovy[Test Cases/MSAccountLogin_passing_with_specific_locator], which contains lines as follows:
 
 [source, groovy]
 ----
