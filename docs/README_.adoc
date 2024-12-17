@@ -323,9 +323,9 @@ Can I fix this problematic keyword? --- Yes, I can propose an idea. Let me show 
 
 I made 2 codes:
 - https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC4/Script1733473026730.groovy[`Test Cases/TC4`]
-- https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy[`Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy`]
+- https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Keywords/com/kazurayam/hack/StatelessWaitForElementNotClickableKeyword.groovy[`Keywords/com/kazurayam/hack/StatelessWaitForElementNotClickableKeyword.groovy`]
 
-The TC4 is similar to the TC2 but different. The TC4 calls `com.kazurayam.hack.MockWaitForElementNotClickableKeyword` class instead of the `WebUI.waitForElementNotClickable` keyword. When I ran the TC4, it threws no SERE.
+The TC4 is similar to the TC2 but different. The TC4 calls `com.kazurayam.hack.StatelessWaitForElementNotClickableKeyword` class instead of the `WebUI.waitForElementNotClickable` keyword. When I ran the TC4, it threws no SERE.
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/TC4.png[]
 
@@ -356,8 +356,10 @@ This code is likely to throw SERE.
 ...
 ----
 
-==== com.kazurayam.hack.MockWaitForElementNotClickable
+==== com.kazurayam.hack.StatelessWaitForElementNotClickable
+
 This code does not throw any SERE.
+
 [source,groovy]
 ----
 ...

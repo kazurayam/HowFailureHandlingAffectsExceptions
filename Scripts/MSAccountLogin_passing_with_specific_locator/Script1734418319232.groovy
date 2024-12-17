@@ -29,9 +29,9 @@ TestObject nextButton = makeTestObject("NextButton", "//input[@id='idSIButton9']
 WebUI.waitForElementClickable(nextButton, 8)
 WebUI.click(nextButton)
 
-TestObject passwd = makeTestObject("Passwd", "//input[@name='passwd' and @class='']")
+TestObject passwd = makeTestObject("Passwd", "//input[@name='passwd' and @class='']")  // with more specific locator
 WebUI.waitForElementClickable(passwd, 8)
-WebUI.click(passwd)    //=>  throws a StaleElementReferenceException
+WebUI.click(passwd)
 WebUI.sendKeys(passwd, GlobalVariable.PASSWD)
 
 TestObject signinButton = makeTestObject("SigninButton", "//button[@id='idSIButton9']")
@@ -42,5 +42,5 @@ TestObject yesButton = makeTestObject("YesButton", "//button[@id='acceptButton']
 WebUI.waitForElementClickable(yesButton, 20)
 WebUI.click(yesButton)
 
-WebUI.delay(30)
+WebUI.delay(10)
 WebUI.closeBrowser()

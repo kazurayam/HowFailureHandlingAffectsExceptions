@@ -5,7 +5,7 @@ import java.nio.file.Paths
 
 import org.openqa.selenium.WebElement
 
-import com.kazurayam.hack.MockWaitForElementNotClickableKeyword
+import com.kazurayam.hack.StatelessWaitForElementNotClickableKeyword
 import com.kms.katalon.core.configuration.RunConfiguration
 import com.kms.katalon.core.model.FailureHandling
 import com.kms.katalon.core.testobject.TestObject
@@ -15,9 +15,8 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
  * TC4
  *
  * A small modification from TC2.
- * TC4 calls com.kazurayam.hack.MockWaitForElementNotClickable() keyword.
- * TC4 does NOT throw StaleElementReferenceException because
- * the MockWaitForElementNotClickable class is hacked.
+ * TC4 calls com.kazurayam.hack.StatelessWaitForElementNotClickable() keyword.
+ * TC4 does NOT throw StaleElementReferenceException.
  *
  * @author kazurayam
  */
@@ -38,7 +37,7 @@ WebUI.verifyElementPresent(myButtonTestObject, 10, FailureHandling.STOP_ON_FAILU
 
 try {
 	// the following statement does NOT throw StaleElementReferenceException
-	boolean b = new MockWaitForElementNotClickableKeyword().waitForElementNotClickable(myButtonTestObject,
+	boolean b = new StatelessWaitForElementNotClickableKeyword().waitForElementNotClickable(myButtonTestObject,
 		                        10,
 								FailureHandling.STOP_ON_FAILURE)
 	// so the keyword will throw a SERE

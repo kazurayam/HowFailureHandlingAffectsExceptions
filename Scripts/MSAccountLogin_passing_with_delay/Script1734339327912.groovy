@@ -34,7 +34,7 @@ WebUI.waitForElementClickable(passwd, 8)
 
 WebUI.delay(3)    // !important
 
-WebUI.click(passwd)    //=>  throws a StaleElementReferenceException
+WebUI.click(passwd)    //=> no Exception thrown
 WebUI.sendKeys(passwd, GlobalVariable.PASSWD)
 
 TestObject signinButton = makeTestObject("SigninButton", "//button[@id='idSIButton9']")

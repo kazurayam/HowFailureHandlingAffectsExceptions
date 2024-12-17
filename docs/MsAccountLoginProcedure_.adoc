@@ -46,7 +46,7 @@ The script opens a browser window, navigate to a URL
 
 - https://dev.azure.com/${GlobalVariable.ACCOUNT}
 
-As you well know, this is the entry point for Microsoft Azure DevOps. Browser will show a view with a title "Sign in". I will call this view as "the Sign-in view" for short.
+As you well know, this is the entry point for Microsoft Azure DevOps. You will be redirected to a view with a title "Sign in". I will call this view as "the Sign-in view" for short.
 
 image::https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/MsAccountLoginProcedure_1_Signin.png[]
 
@@ -60,7 +60,7 @@ However, the script throws an StaleElementReferenceException and stops. You can 
 
 - https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/MsAccountLoginProcedure_console.txt[console output]
 
-Please read this log. You can find that a `StaleElementReferenceException` was thrown by the line #38:
+You can find that a `StaleElementReferenceException` was thrown by the line #38:
 
 ```
 WebUI.click(passwd)
@@ -69,6 +69,24 @@ WebUI.click(passwd)
 This was a surprise for me.
 
 == Problem analysis.
+
+=== WebUI.click keyword is a stateful keyword
+
+I checked the source code of `WebUI.click` keyword of Katalon Studio v9.0.0, which contains the following fragment:
+
+- https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/10.0.0/source/com.kms.katalon.core.webui/com/kms/katalon/core/webui/keyword/builtin/ClickKeyword.groovy[ClickKeyword source]
+
+Let me dictate this source:
+
+1. The WebUI.click keyword internally calls a method `clickUntilSuccessWithTimeout(WebElement,long,int)` which contains a `while` loop.
+
+2. The loop continues while `webElement.click()` throws `ElementClickInterceptedException`.
+
+3. The loop terminates when `webElement.click()` throws an Exception other than `ElementClickInterceptedException`, for example a `StaleElementReferenceException`.
+
+To my surprise, the `WebUI.click` keyword is "stateful", is not a "stateless" keyword.
+
+=== The "Sign in" view also contains an invisible "Password" field as well as the "Password" view
 
 
 
