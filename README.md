@@ -490,9 +490,9 @@ Can I fix this problematic keyword? --- Yes, I can propose an idea. Let me show 
 
 I made 2 codes:
 - [`Test Cases/TC4`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/TC4/Script1733473026730.groovy)
-- [`Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Keywords/com/kazurayam/hack/MockWaitForElementClickableKeyword.groovy)
+- [`Keywords/com/kazurayam/hack/StatelessWaitForElementNotClickableKeyword.groovy`](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Keywords/com/kazurayam/hack/StatelessWaitForElementNotClickableKeyword.groovy)
 
-The TC4 is similar to the TC2 but different. The TC4 calls `com.kazurayam.hack.MockWaitForElementNotClickableKeyword` class instead of the `WebUI.waitForElementNotClickable` keyword. When I ran the TC4, it threws no SERE.
+The TC4 is similar to the TC2 but different. The TC4 calls `com.kazurayam.hack.StatelessWaitForElementNotClickableKeyword` class instead of the `WebUI.waitForElementNotClickable` keyword. When I ran the TC4, it threws no SERE.
 
 <figure>
 <img src="https://kazurayam.github.io/StaleElementReferenceExceptionReproduction/images/TC4.png" alt="TC4" />
@@ -524,7 +524,7 @@ This code is likely to throw SERE.
               return true
     ...
 
-#### com.kazurayam.hack.MockWaitForElementNotClickable
+#### com.kazurayam.hack.StatelessWaitForElementNotClickable
 
 This code does not throw any SERE.
 
@@ -573,6 +573,8 @@ Why the `waitForElementClickable` keyword threw a StaleElementReferenceException
 </figure>
 
 The `disabled` attribute makes the element unable to click. Therefore the `WebUI.waitForElementClickable` keyword is forced to wait for a while. Then at 3 secs after the initial page loading, JavaScript removes the element and recreate a new `<button id="myButton">` with no `disabled` attribute. As soon as the button element is recreated, the `WebUI.waitForElementClickable` keyword tries to access to the WebElement object, which has got already stale.
+
+The `WebUI.waitForElementClickable` is a stateful keyword. There could be more.
 
 ## Conclusion
 
