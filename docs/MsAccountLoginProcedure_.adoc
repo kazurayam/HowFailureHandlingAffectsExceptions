@@ -1,4 +1,4 @@
-= Microsoft Account Login Procedure tricks Katalon WebUI.click keyword to throw StaleElementReferenceException
+= Microsoft Account Login Procedure tricks Katalon WebUI.click keyword
 
 - @author kazurayam
 - @date Dec 2024
@@ -80,11 +80,13 @@ Let me dictate this source:
 
 1. The WebUI.click keyword internally calls a method `clickUntilSuccessWithTimeout(WebElement,long,int)` which contains a `while` loop.
 
-2. The loop continues untile the timeout expires (30 secs as default) while `webElement.click()` throws `ElementClickInterceptedException`.
+2. The loop will exit as soon as the call to `webElement.click()` finished without throwing any Exception.
 
-3. The loop terminates when `webElement.click()` throws an Exception other than `ElementClickInterceptedException`, for example a `StaleElementReferenceException`.
+3. The loop continues untill the timeout expires (30 secs as default) while `webElement.click()` throws `ElementClickInterceptedException`.
 
-The `WebUI.click` keyword is implemented "stateful". It is not a "stateless" keyword. This was a surprise for me.
+4. The loop terminates when `webElement.click()` throws an Exception other than `ElementClickInterceptedException`, for example a `StaleElementReferenceException`.
+
+Thus, the `WebUI.click` keyword is implemented "stateful". It is not a "stateless" keyword. This was a surprise for me.
 
 === The "Sign in" view also contains an invisible "Password" field as well as the "Password" view
 
@@ -98,15 +100,13 @@ I looked into the HTML source of the "Password view" to see how the input elemen
 ...
 ----
 
-In order to select this input element, in the TC2 script, I used a XPath expression as this:
+In order to select this input element, in the script, I used a XPath expression as this:
 
 ```
 //input[@name="passwd"]
 ```
 
-I thought this XPath would be good enought, but in fact, it wasn't ...
-
-I looked into the HTML source of the "Sign-in view" as well. There I found the following fragment:
+I thought this XPath would be good enough. But in fact, it wasn't ... Just accidentally, I looked into the HTML source of the "Sign-in view" as well. There I found the following fragment:
 
 ==== the Sign-in view
 [source,html]
@@ -118,7 +118,7 @@ I looked into the HTML source of the "Sign-in view" as well. There I found the f
 ...
 ----
 
-The "Password" field was there in the "Sign-in view" as well as in the "Password view"!
+The "Password" field was there in the "Sign-in view", not only in the "Password view"!
 
 I noticed the CSS class `moveOffScreen`. I found the `moveOffScreen` class is implemented as follows.
 
@@ -156,7 +156,7 @@ Now I should read the https://github.com/kazurayam/StaleElementReferenceExceptio
 38 WebUI.click(passwd)
 ----
 
-At the Line#34, the script clicked the Next button. So the view will transition from the "Sign-in view" to the "Password view". But it takes a few seconds.
+At the Line#34, the script clicked the Next button. So the view will start transition from the "Sign-in view" to the "Password view". But it takes a few seconds.
 
 I intended that the Line#37 will be enough to wait for the view transition to finish and make sure that we are on the "Password view".
 
@@ -208,4 +208,4 @@ This script also succeeded to open the Azure DevOps console.
 
 == Conclusion
 
-The Microsoft Account Login procedure is a terribly difficult target for Web UI automation, but I could find out a way.
+The Microsoft Account Login procedure is a terribly difficult target for Web UI automation, but I could find out a way to live with it.
