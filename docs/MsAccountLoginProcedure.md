@@ -165,7 +165,7 @@ I thought this XPath would be good enough. But in fact, it wasn’t …​ Just 
             class="moveOffScreen" tabindex="-1" aria-hidden="true">
     ...
 
-The "Password" field was there in the "Sign-in view", not only in the "Password view"!
+Wow! The "Password" field was there in the "Sign-in view" as well, not only in the "Password view"!
 
 I noticed the CSS class `moveOffScreen`. I found the `moveOffScreen` class is implemented as follows.
 
@@ -176,7 +176,7 @@ I noticed the CSS class `moveOffScreen`. I found the `moveOffScreen` class is im
         overflow:hidden; opacity:0; filter:alpha(opacity=0)
     }
 
-The height is 0, the width is 0. This means the "Password" field is present in the "Sign-in view" but is invisible.
+The height is 0, the width is 0. This means, the "Password" field is present in the "Sign-in view" but is invisible.
 
 > I have no idea why the "Sign-in view" has an invisible "Password" field. To me, it seems totally useless. Only the implementors of the Microsoft Account Login processing would know.
 
@@ -200,9 +200,7 @@ I intended that the Line#37 will be enough to wait for the view transition to fi
 
 But my intention failed, because the "Sign-in view" also contained a HTML element that matches with the XPath expression `//input[@name='passwd']`. The Line#37 will immediately pass while the view is still on the "Sign-in" state. The Line#37 will fire `WebUI.click(password)` on the "Sign-in view".
 
-As I explained above, the `WebUI.click` keyword will drop into a loop while the view is on the "Sign-in".
-
-Sooner or later the view will transition from the "Sign-in view" to the "Password view". On the "Password view", yes, there is an HTML element that matches with the XPath `//input[@name='passwd']`. However the HTML node is a newly created one. Therefore a StaleElementRefereceException will be thrown.
+As I explained above, the `WebUI.click` keyword will fall into a loop while the view is on the "Sign-in view". Sooner or later the view will transition from the "Sign-in view" to the "Password view". On the "Password view", yes, there is an HTML element that matches with the XPath `//input[@name='passwd']`. However the HTML node is a newly created one. Therefore a StaleElementRefereceException will be thrown.
 
 ## Solutions
 
@@ -229,7 +227,7 @@ This script passed! I could reach to my Azure DevOps console:
 
 ### Locator to select the target element specifically
 
-Both of the "Sign-in view" and the "Password view" have `<input name="passwd">` elements which confused my failing script. But the two elements are coded sightly different. Escpecially, the `class` attribute can differentiate the two. It would be an idea to use an XPath expression more specific so that it matches the `<input>` node on the "Password view" only.
+Both of the "Sign-in view" and the "Password view" have `<input name="passwd">` elements. Therefore my failing script was confused. But the two elements are coded slightly different. Escpecially, the `class` attribute can differentiate the two. It would be an idea to use an XPath expression more specific so that it matches the `<input>` node on the "Password view" only.
 
 I made the [Test Cases/MSAccountLogin\_passing\_with\_specific\_locator](https://github.com/kazurayam/StaleElementReferenceExceptionReproduction/blob/main/Scripts/MSAccountLogin_passing_with_specific_locator/Script1734418319232.groovy), which contains lines as follows:
 
